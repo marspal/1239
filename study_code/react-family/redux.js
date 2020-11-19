@@ -3,14 +3,14 @@
  * @author andyxu
  */
 module.exports = createStore;
-function createStore(initState) {
+function createStore(reducer, initState) {
     let state = initState;
     let listeners = [];
     function subscribe(listener) {
         listeners.push(listener);
     }
-    function changeState(newState) {
-        state = newState;
+    function dispatch(action) {
+        state = reducer(state, action);
         for (let i = 0; i < listeners.length; ++i) {
             const listener = listeners[i];
             listener();
@@ -21,7 +21,7 @@ function createStore(initState) {
     }
     return {
         subscribe,
-        changeState,
+        dispatch,
         getState
     };
 }
