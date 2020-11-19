@@ -9,7 +9,7 @@ const initState = {
 const stateInfo = {
     message: 'andyxu'
 };
-function changeCountReducer(state, action) {
+function changeCountReducer(state = initState, action) {
     switch (action.type) {
         case 'INCREMENT':
             return {
@@ -25,7 +25,7 @@ function changeCountReducer(state, action) {
             return state;
     }
 }
-function infoReducer(state, action) {
+function infoReducer(state = stateInfo, action) {
     switch (action.type) {
         case 'CHANGE_NAME':
             return {
@@ -93,11 +93,19 @@ describe('redux', () => {
             info: infoReducer
         });
         const store = createStore(reducer);
-        expect(store.getState()).toBeUndefined();
+        expect(store.getState()).not.toBeUndefined();
         store.dispatch({
             type: 'CHANGE_NAME',
             message: 'another example'
         });
         expect(store.getState().info.message).toBe('another example');
+    });
+    it('should work after spilting state', () => {
+        const reducer = combineReducer({
+            counter: changeCountReducer,
+            info: infoReducer
+        });
+        const store = createStore(reducer);
+        expect(store.getState().counter.count).toBe(1);
     });
 });

@@ -24,6 +24,7 @@ function createStore(reducer, initState) {
     function getState() {
         return state;
     }
+    dispatch({type: Symbol()});
     return {
         subscribe,
         dispatch,
@@ -38,7 +39,7 @@ function combineReducer(reducers) {
         reducerKeys.forEach(key => {
             const reducer = reducers[key];
             const prevState = state[key];
-            nextState[key] = reducer(prevState || {}, action);
+            nextState[key] = reducer(prevState, action);
         });
         return nextState;
     };
