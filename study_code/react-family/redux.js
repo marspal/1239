@@ -10,6 +10,10 @@ module.exports = {
     applyMiddleware
 };
 function createStore(reducer, initState, rewriteCreateStoreFunc) {
+    if (typeof initState === 'function') {
+        rewriteCreateStoreFunc = initState;
+        initState = undefined;
+    }
     if (rewriteCreateStoreFunc) {
         return rewriteCreateStoreFunc(createStore)(reducer, initState);
     }
@@ -17,6 +21,10 @@ function createStore(reducer, initState, rewriteCreateStoreFunc) {
     let listeners = [];
     function subscribe(listener) {
         listeners.push(listener);
+        return function unsubscribe() {
+            const index = listeners.indexOf(listener);
+            listeners.splice(index, 1);
+        };
     }
     function dispatch(action) {
         state = reducer(state, action);
@@ -28,11 +36,16 @@ function createStore(reducer, initState, rewriteCreateStoreFunc) {
     function getState() {
         return state;
     }
+    function replaceReducer(nextReducer) {
+        reducer = nextReducer;
+        dispatch({type: Symbol()});
+    }
     dispatch({type: Symbol()});
     return {
         subscribe,
         dispatch,
-        getState
+        getState,
+        replaceReducer
     };
 }
 
@@ -52,8 +65,9 @@ function combineReducer(reducers) {
 function applyMiddleware(...middlwares) {
     return function rewriteCreateStoreFunc(oldCreateStore) {
         return function newCreateStore(reducer, initState) {
-            const store = createStore(reducer, initState);
-            const chain = middlwares.map(middleware => middleware(store));
+            const store = oldCreateStore(reducer, initState);
+            const simpleStore = {getState: store.getState};
+            const chain = middlwares.map(middleware => middleware(simpleStore));
             store.dispatch = chain.reduceRight((current, next) => {
                 return next(current);
             }, store.dispatch);
