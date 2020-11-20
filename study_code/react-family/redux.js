@@ -66,7 +66,7 @@ function applyMiddleware(...middlwares) {
     return function rewriteCreateStoreFunc(oldCreateStore) {
         return function newCreateStore(reducer, initState) {
             const store = oldCreateStore(reducer, initState);
-            const simpleStore = {getState: store.getState};
+            const simpleStore = {getState: store.getState, dispatch: store.dispatch};
             const chain = middlwares.map(middleware => middleware(simpleStore));
             store.dispatch = chain.reduceRight((current, next) => {
                 return next(current);

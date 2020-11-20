@@ -2,13 +2,41 @@
  * @file Redux 测试
  * @author xumingquan
  */
-const {createStore, combineReducer} = require('../../react-family/redux');
+const {createStore, combineReducer, applyMiddleware} = require('../../react-family/redux');
 const initState = {
     count: 1
 };
 const stateInfo = {
     message: 'andyxu'
 };
+
+const ADD_TODO = 'ADD_TODO';
+
+function addTodo(text) {
+    return {type: ADD_TODO, text};
+}
+function id(state) {
+    return state.reduce((result, item) => (item.id > result ? item.id : result), 0) + 1;
+}
+function todos(state = [], action) {
+    switch (action.type) {
+        case ADD_TODO:
+            return [
+                ...state,
+                {
+                    id: id(state),
+                    text: action.text
+                }
+            ];
+        default:
+            return state;
+    }
+}
+/** 中间件 */
+function thunk({dispatch, getState}) {
+    return next => action => typeof action === 'function' ? action(dispatch, getState) : next(action);
+}
+
 function changeCountReducer(state = initState, action) {
     switch (action.type) {
         case 'INCREMENT':
@@ -111,6 +139,20 @@ describe('Redux', () => {
         });
     });
     describe('redux applyMiddleware', () => {
+        it('wraps dispatch method width middleware once', () => {
+            function test(spyMethods) {
+                return methods => {
+                    spyMethods(methods);
+                    return next => action => next(action);
+                };
+            }
+            const spy = jest.fn();
+            const store = applyMiddleware(test(spy), thunk)(createStore)(todos);
+            store.dispatch(addTodo('Use Redux'));
+            store.dispatch(addTodo('Flux FTW'));
 
+            expect(spy).toHaveBeenCalledTimes(1);
+            expect(store.getState()).to;
+        });
     });
 });
