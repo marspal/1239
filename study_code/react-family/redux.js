@@ -4,6 +4,7 @@
  * to: reducer拆分
  */
 // 日志dispatch action type: 传递 是否需要上传日志
+// b
 module.exports = {
     createStore,
     combineReducer,
@@ -65,13 +66,72 @@ function combineReducer(reducers) {
 function applyMiddleware(...middlwares) {
     return function rewriteCreateStoreFunc(oldCreateStore) {
         return function newCreateStore(reducer, initState) {
-            const store = oldCreateStore(reducer, initState);
-            const simpleStore = {getState: store.getState, dispatch: store.dispatch};
-            const chain = middlwares.map(middleware => middleware(simpleStore));
-            store.dispatch = chain.reduceRight((current, next) => {
-                return next(current);
-            }, store.dispatch);
-            return store;
+            let store = oldCreateStore(reducer, initState);
+            let dispatch = store.dispatch;
+            let chain = [];
+
+            var middlewareAPI = {
+                dispatch: (action) => dispatch(action),
+                getState: store.getState
+            };
+            chain = middlwares.map(middleware => middleware(middlewareAPI));
+            dispatch = compose(...chain)(dispatch);
+            return {
+                ...store,
+                dispatch
+            };
         };
     };
+}
+
+function compose(...funcs){
+    return arg => funcs.reduceRight((composed, f) => f(composed),arg)
+}
+
+// thunk
+function createThunkMiddle(extraArgument){ 
+    return ({dispatch, getState}) => next => action => {
+       if (typeof action === 'function') {
+            return action(dispatch, getState, extraArgument);
+       }
+       return next(action);
+    }
+}
+function isPromise(val){
+    return val && typeof val.then === 'function';
+}
+// thunk-promise
+function promiseMiddleware({dispatch, getState}){
+    return next => action => {
+        if(isPromise(action)){
+            return action.then(dispatch)
+        }
+        return next(action);
+    }
+}
+
+// redux-compsable-fetch
+const fetchMiddleWare = (store) => next => action => {
+    if (!action.url || !Array.isArray(action.types)){
+        return next(action);
+    }
+    const [LOADING, SUCCESS, ERROR] = action.types;
+    next({
+        type: LOADING,
+        loading: true,
+        ...action
+    });
+    fetch(action.url, {params: action.params}).then(res=>{
+        next({
+            type: SUCCESS,
+            loading: false,
+            payload: result
+        });
+    }).catch(err => {
+        next({
+            type: ERROR,
+            loading: false,
+            error: err
+        });
+    });
 }

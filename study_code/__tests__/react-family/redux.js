@@ -2,6 +2,7 @@
  * @file Redux 测试
  * @author xumingquan
  */
+import anotherThunk from '../../react-family/middlewares/thunk'
 const {createStore, combineReducer, applyMiddleware} = require('../../react-family/redux');
 const initState = {
     count: 1
@@ -32,9 +33,22 @@ function todos(state = [], action) {
             return state;
     }
 }
+
+function addTodoAsync(text) {
+    return dispatch => new Promise(resolve => {
+        setImmediate(() => {
+            dispatch(addTodo(text));
+            resolve();
+        });
+    })
+}
 /** 中间件 */
 function thunk({dispatch, getState}) {
-    return next => action => typeof action === 'function' ? action(dispatch, getState) : next(action);
+    return function(next){
+        return function(action){
+            return typeof action === 'function' ? action(dispatch, getState) : next(action);
+        }
+    }
 }
 
 function changeCountReducer(state = initState, action) {
@@ -62,6 +76,14 @@ function infoReducer(state = stateInfo, action) {
             };
         default:
             return state;
+    }
+}
+
+function addTodoIfEmpty(text){
+    return (dispatch, getState) => {
+        if(!getState().length){
+            dispatch(addTodo(text));
+        }
     }
 }
 describe('Redux', () => {
@@ -152,7 +174,71 @@ describe('Redux', () => {
             store.dispatch(addTodo('Flux FTW'));
 
             expect(spy).toHaveBeenCalledTimes(1);
-            expect(store.getState()).to;
+            expect(spy.mock.calls[0][0]).toHaveProperty('getState');
+            expect(spy.mock.calls[0][0]).toHaveProperty('dispatch');
+            expect(store.getState()).toEqual([
+                {id: 1, text: 'Use Redux'},
+                {id: 2, text: 'Flux FTW'}
+            ]);
         });
+        it('passes recursive dispatches through the middleware chain', (done) => {
+            function test(spyOnMethods){
+                return () => next => action => {
+                    spyOnMethods(action);
+                    return next(action);
+                }
+            }
+            const spy = jest.fn();
+            const store = applyMiddleware(test(spy), thunk)(createStore)(todos);
+            const dispatchedValue = store.dispatch(addTodoAsync('Use Redux'));
+            dispatchedValue.then(() => {
+                expect(spy).toHaveBeenCalledTimes(2);
+                done()
+            });
+        });
+        it('works with thunk middleware', (done) => {
+            const store = applyMiddleware(anotherThunk)(createStore)(todos);
+            // expect(1).toBe(1);
+            store.dispatch(addTodoIfEmpty('Hello'));
+            expect(store.getState()).toEqual([
+                {
+                    id: 1,
+                    text: 'Hello'
+                }
+            ]);
+            store.dispatch(addTodo('World'));
+            expect(store.getState()).toEqual([
+                {
+                    id: 1,
+                    text: 'Hello'
+                },{
+                    id: 2,
+                    text: 'World'
+                }
+            ]);
+            const dispatchValue = store.dispatch(addTodoAsync('MayBe'));
+            store.dispatch(addTodo('World1'));
+            dispatchValue.then(() => {
+                expect(store.getState()).toEqual([
+                    {
+                        id: 1,
+                        text: 'Hello'
+                      },
+                      {
+                        id: 2,
+                        text: 'World'
+                      },
+                      {
+                        id: 3,
+                        text: 'World1'
+                      },
+                      {
+                        id: 4,
+                        text: 'MayBe'
+                      }
+                ]);
+                done()
+            })
+        })
     });
 });
