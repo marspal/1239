@@ -2,7 +2,7 @@
  * @file Redux 测试
  * @author xumingquan
  */
-import anotherThunk from '../../react-family/middlewares/thunk'
+import anotherThunk from '../../react-family/middlewares/redux-thunk'
 const {createStore, combineReducer, applyMiddleware} = require('../../react-family/redux');
 const initState = {
     count: 1
