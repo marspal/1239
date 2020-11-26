@@ -1,3 +1,7 @@
+/**
+ * @file delegetes flat proto 第二层属性拷贝到proto下
+ * @author andyxu
+ */
 module.exports = Delegator;
 
 function Delegator(proto, target){
@@ -49,7 +53,7 @@ Delegator.prototype.fluent = function(name){
   var target = this.target;
   this.fluents.push(name);
   proto[name] = function(val){
-    if('undefined' !== val){
+    if('undefined' != typeof val){
       this[target][name] = val;
       return this;
     }else{
@@ -78,7 +82,7 @@ Delegator.auto = function(proto, targetProto, targetProp){
       }else {
         delegator.getter(property);
       }
-      // 当且仅当属性的值可以被改变时为true
+      // 当且仅当属性的值可以被改变时为true 
       if (descriptor.writable) {
         delegator.setter(property);
       }
