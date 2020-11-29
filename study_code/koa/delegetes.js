@@ -1,6 +1,7 @@
 /**
  * @file delegetes flat proto 第二层属性拷贝到proto下
  * @author andyxu
+ * todo: vary组件库实现
  */
 module.exports = Delegator;
 

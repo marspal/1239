@@ -8,7 +8,8 @@ describe('.method(name)', () => {
                 return val;
             }
         };
-        delegate(obj, 'request').method('foo');
+        var delObj = delegate(obj, 'request');
+        delObj.method('foo');
         expect(obj.foo('something')).toBe('something');
     });
 });
