@@ -2,7 +2,13 @@
  * @file
  */
 var crypto = require('crypto');
+const hash = crypto.createHmac('sha1', '123a11sd');
 
+// 可任意多次调用update():
+hash.update('Hello, world!');
+hash.update('Hello, nodejs! asdasd');
+
+console.log(hash.digest('base64'));
 module.exports = Keygrip;
 
 function Keygrip(keys, alorithm, encoding) {
