@@ -16,5 +16,8 @@
     "@babel/preset-env": "^7.12.1",
     "babel-jest": "^26.6.3",
     "jest": "^26.6.3"
+  },
+  "dependencies": {
+    "cookies": "^0.8.0"
   }
 }

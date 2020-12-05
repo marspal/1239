@@ -1,15 +1,20 @@
-const http = require("http");
+var Keygrip = require("./keygrip");
 
-http.createServer((req, res) => {
-  const cookie = req.headers.cookie;
-  console.log(cookie);
-  res.setHeader('Set-Cookie', 'SSID=Ap4GTEq;HttpOnly');
-  res.setHeader('Set-Cookie', 'name=123123;HttpOnly');
-  res.writeHead(200, {
-    'Content-Type': 'text/html;charset=utf8'
-  });
-  const ip = res.socket.remoteAddress;
-  const port = res.socket.remotePort;
-  res.end(`您的 IP 地址是 ${ip}，您的源端口是 ${port}`);
-  res.end('3040');
-}).listen(3000);
+// 定义所有的Cookie
+function Cookies(req, res, options){
+  if (!(this instanceof Cookies)) return new Cookies(req, res, options);
+  this.secure = undefined;
+  this.request = req;
+  this.response = res;
+  // 处理options
+}
+
+Cookies.prototype.get = function(name, opts){}
+Cookies.prototype.set = function(name, value, opts){}
+
+// 每一个Cookie
+function Cookie(name, val, attrs){
+
+}
+
+Cookie.prototype.path=""
