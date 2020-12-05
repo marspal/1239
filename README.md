@@ -16,7 +16,9 @@ From good to great BD集结号
 
 - 学习笔记
 
+### 常用的node库
 
+1. glob
 
 ### 学习笔记
 
@@ -31,5 +33,19 @@ From good to great BD集结号
 2. crypto 
 
 - timingSafeEqual: This function is based on a constant-time algorithm.
+
+```js
+// 重点replace更函数的形式
+function sign(data, key){
+  return crypto.createHmac(alorithm, key)
+    .update(data)
+    .digest(encoding)
+    .replace(/\/|\+|=/g, function(x){
+        return ({"/": "_", "+": "-", "=": ""})[x]
+    });
+}
+```
+
+3. glob
 
   
