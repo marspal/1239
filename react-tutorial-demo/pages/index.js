@@ -5,7 +5,7 @@ export default function Index() {
   return (
     <>
       <Head>
-        <title>Tutorial: Intro to React</title>
+        <title>完全理解Redux</title>
         <link
           rel="icon"
           type="image/png"

@@ -17,4 +17,10 @@ function Cookie(name, val, attrs){
 
 }
 
-Cookie.prototype.path=""
+Cookie.prototype.path = "/";
+Cookie.prototype.expires = undefined;
+Cookie.prototype.domain = undefined;
+Cookie.prototype.httpOnly = true;
+Cookie.prototype.sameSite  = false;
+Cookie.prototype.secure = false;
+Cookie.prototype.overwrite = false;

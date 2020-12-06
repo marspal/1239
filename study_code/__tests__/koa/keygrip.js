@@ -109,8 +109,8 @@ describe('Keygrip', () => {
       var keys = new Keygrip(['SEKRIT1'], null, 'hex')
       var data = 'Keyboard Cat has a hat.'
       expect(keys.verify(data, 'df84abdce22c85e51858a2f9ff0fbecc9b1d48d9')).toBeTruthy();
-      keys = new Keygrip(["keyboard cat"], null, 'base64');
-      data = '2020-12-05T16:03:07.416Z';
+      keys = new Keygrip(["keyboard cat"]);
+      data = '2020-12-06T02:49:53.879Z';
       console.log(keys.sign(data));
     })
   })
