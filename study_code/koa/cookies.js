@@ -39,7 +39,11 @@ Cookie.prototype.toHeader = function(){
   if(this.domain) header += ";domain=" + this.domain;
   if(this.sameSite) header += ";samesite=" + (this.sameSite  === true ? 'strict': this.sameSite.toLowerCase());
   if(this.secure) header += ";secure";
-  if(this.httpOnly) header += ";httpOnly"
+  if(this.httpOnly) header += ";httpOnly";
 
   return header;
 }
+
+Object.defineProperty(Cookie.prototype, 'maxAge', {
+  
+});
