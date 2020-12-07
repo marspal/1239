@@ -35,6 +35,11 @@ Cookie.prototype.toHeader = function(){
   if(this.maxAge) this.expires = new Date(Date.now() + this.maxAge);
 
   if(this.path) header += ";Path=" + this.path;
-  if(this.expires) header += ";Expires =" + this.expires.toUTCString()
+  if(this.expires) header += ";Expires =" + this.expires.toUTCString();
+  if(this.domain) header += ";domain=" + this.domain;
+  if(this.sameSite) header += ";samesite=" + (this.sameSite  === true ? 'strict': this.sameSite.toLowerCase());
+  if(this.secure) header += ";secure";
+  if(this.httpOnly) header += ";httpOnly"
+
   return header;
 }
