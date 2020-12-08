@@ -73,4 +73,7 @@ Set-Cookie: __Host-id=1; Secure; Path=/; domain=example.com
 
 - 非法域: 属于特定域的 cookie，假如域名不能涵盖原始服务器的域名，那么应该被用户代理拒绝
 
+
+- cookie name & value的取值范围: /^[\u0009\u0020-\u007e\u0080-\u00ff]+$/;
+
   
