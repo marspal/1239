@@ -10,6 +10,13 @@ var Keygrip = require("./keygrip");
 var http = require('http');
 var cache = {}
 
+/**
+ * u0009 水平制表符
+ * u0020-u007e 基本拉丁文
+ * u0080   u00ff 带分音符的拉丁文小写字母Y字符(ÿ)
+ * u0080 - u00ff: C1控制符及拉丁文补充
+ * 因为u007F: DEL 排除
+ */
 var fieldContentRegExp = /^[\u0009\u0020-\u007e\u0080-\u00ff]+$/;
 var SAME_SITE_REGEXP = /^(?:lax|none|strict)$/i
 // 定义所有的Cookie
@@ -33,8 +40,8 @@ function Cookies(req, res, options){
 
 Cookies.prototype.get = function(name, opts) {
   var sigName = name + '.sig',
-      , header, match, value, remote, data, index
-      , signed = opts && opts.signed !== undefined ? opts.signed : !!this.keys
+      header, match, value, remote, data, index,
+      signed = opts && opts.signed !== undefined ? opts.signed : !!this.keys
   header = this.request.headers['cookie'];
   if(!header) return;
 
@@ -76,11 +83,11 @@ Cookies.prototype.set = function(name, value, opts){
     : secure;
 
   if (opts && "secureProxy" in opts) {
-    deprecate('"secureProxy" option; use "secure" option, provide "secure" to constructor if needed')
+    // deprecate('"secureProxy" option; use "secure" option, provide "secure" to constructor if needed')
     cookie.secure = opts.secureProxy
   }
   pushCookie(headers, cookie);
-  if (opts && signed){
+  if (signed){
     if (!this.keys) throw new Error('.keys required for signed cookies');
     cookie.value = this.keys.sign(cookie.toString())
     cookie.name += '.sig';
@@ -140,12 +147,12 @@ Cookie.prototype.toHeader = function(){
   var header = this.toString();
   if(this.maxAge) this.expires = new Date(Date.now() + this.maxAge);
 
-  if(this.path) header += ";Path=" + this.path;
-  if(this.expires) header += ";Expires =" + this.expires.toUTCString();
-  if(this.domain) header += ";domain=" + this.domain;
-  if(this.sameSite) header += ";samesite=" + (this.sameSite  === true ? 'strict': this.sameSite.toLowerCase());
-  if(this.secure) header += ";secure";
-  if(this.httpOnly) header += ";httpOnly";
+  if(this.path) header += "; path=" + this.path;
+  if(this.expires) header += "; expires =" + this.expires.toUTCString();
+  if(this.domain) header += "; domain=" + this.domain;
+  if(this.sameSite) header += "; samesite=" + (this.sameSite  === true ? 'strict' : this.sameSite.toLowerCase());
+  if(this.secure) header += "; secure";
+  if(this.httpOnly) header += "; httponly";
 
   return header;
 }
@@ -166,7 +173,6 @@ function pushCookie(headers, cookie){
       }
     }
   }
-
   headers.push(cookie.toHeader());
 }
 
