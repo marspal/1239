@@ -64,7 +64,6 @@ Cookies.prototype.get = function(name, opts) {
     index && this.set(sigName, this.keys.sign(data), { signed: false })
     return value
   }
-
 }
 Cookies.prototype.set = function(name, value, opts){
   var res = this.response,

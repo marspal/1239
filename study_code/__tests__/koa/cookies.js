@@ -5,6 +5,8 @@
 
 import http from 'http';
 import Cookies from '../../koa/cookies';
+import request from 'supertest';
+
 describe('new Cookies.Cookie(name, val, [opt])', () => {
     describe('exception', () => {
         it('should have correct constructor', () => {
@@ -93,6 +95,24 @@ describe('new Cookies.Cookie(name, val, [opt])', () => {
 describe('new Cookies(req, res, [options])', () => {
     it('should create new cookies instance', function (done) {
         // todo
-        done();
+        assertServer(done, function (req, res) {
+
+        });
     });
 });
+
+async function assertServer(done, test) {
+    const server = http.createServer(function (req, res) {
+        try {
+            test(req, res);
+            res.end('OK'); // ? 返回啥
+        } catch (e){
+            res.statusCode = 500;
+            res.end(e.name + ":" + e.message);
+        }
+    });
+    const res = await request(server).get('/');
+    expect(res.status).toBe(200);
+    expect(res.text).toBe('OK');
+    done();
+}
