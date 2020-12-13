@@ -1,4 +1,3 @@
-/*注意：action = {type:'',other:''}, action 必须有一个 type 属性*/
 function plan(state, action) {
   switch (action.type) {
     case 'INCREMENT':

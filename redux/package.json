@@ -1,6 +1,6 @@
 {
-  "name": "react-tutorial-demo",
-  "version": "0.0.0-6a7ffe8",
+  "name": "redux",
+  "version": "0.0.1",
   "dependencies": {
     "@code-hike/mini-browser": "0.0.0-6a7ffe8",
     "@code-hike/mini-editor": "0.0.0-6a7ffe8",

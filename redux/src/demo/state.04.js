@@ -1,5 +1,5 @@
 const createStore = function (initState) {
-const createStore = function (plan, initState) {
+const createStore = function (reducer, initState) {
   let state = initState;
   let listeners = [];
 
@@ -9,9 +9,9 @@ const createStore = function (plan, initState) {
   }
 
   function changeState(newState) {
-  function changeState(action) {
+  function dispatch(action) {
     state = newState;
-    state = plan(state, action);
+    state = reducer(state, action);
     /*通知*/
     for (let i = 0; i < listeners.length; i++) {
       const listener = listeners[i];
@@ -27,6 +27,7 @@ const createStore = function (plan, initState) {
   return {
     subscribe,
     changeState,
+    dispatch,
     getState
   }
 }
