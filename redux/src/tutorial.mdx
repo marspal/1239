@@ -256,7 +256,8 @@ function combineReducer(reducerObj){
     code="state.10.js"
     file="index.js"
     lang="js"
-    height={500}
+    height={370}
+    focus="1:14"
     id="state.10.js"
   />
 </Column>
@@ -265,14 +266,24 @@ function combineReducer(reducerObj){
 但是还有个问题， state 我们还是写在一起的，这样会造成 state 树很庞大，
 不直观，很难维护。我们需要拆分，一个 state，一个 reducer 写一块。
 
-我们修改下 createStore 函数，增加一行 dispatch({ type: Symbol() })
+<Column>
+  <Editor
+    code="state.10.js"
+    file="index.js"
+    lang="js"
+    height={600}
+    focus="16:43"
+    id="state.10.js"
+  />
+</Column>
 
-我们思考下这行可以带来什么效果？
+**我们修改下 createStore 函数，增加一行 dispatch({ type: Symbol() })**
 
-1. createStore 的时候，用一个不匹配任何 type 的 action，来触发 state = reducer(state, action)
+作用:
+- createStore 的时候，用一个不匹配任何 type 的 action，来触发 state = reducer(state, action)
 
-2. 因为 action.type 不匹配，每个子 reducer 都会进到 default 项，返回自己初始化的 state，这样就获得了初始化的 state 树了。
-你可以试试
+- 因为 action.type 不匹配，每个子 reducer 都会进到 default 项，返回自己初始化的 state，这样就获得了初始化的 state 树了。
+
 
 ```js
 /*这里没有传 initState 哦 */
@@ -283,9 +294,10 @@ console.dir(store.getState());
 
 ## 中间件middleware {#setup-option-2-local-development-environment}
 
-中间件 middleware 是 redux 中最难理解的地方。但是我挑战一下用最通俗的语言来讲明白它。如果你看完这一小节，还没明白中间件是什么，不知道如何写一个中间件，那就是我的锅了！
+中间件 middleware 是 redux 中最难理解的地方, 主要参考的是koa中间件机制;
 
-中间件是对 dispatch 的扩展，或者说重写，增强 dispatch 的功能！
+redux中间件是对 dispatch 的扩展，或者说重写，增强 dispatch 的功能, 也就是说在执行真正的
+dispatch时, 执行其他操作
 
 <br />
 
@@ -299,7 +311,9 @@ console.dir(store.getState());
   />
 </Column>
 
-#### 记录日志 {#log-middleware}
+**第一个:记录日志**
+
+dispatch 的时候打印出一些关键的数据; 便于开发测试、联调;
 
 <Column>
   <Editor
@@ -311,11 +325,13 @@ console.dir(store.getState());
   />
 </Column>
 
-#### 记录异常 {#exception}
+**第二个:记录异常** 
 
+当我们dispatch过程出现错误的时候,打印或者上传错误日志
 
+> Q: 如果我又想记录异常,又想打印日志？
 
-#### 多中间件合作 {#more-middleware}
+** 多中间件合作 **
 
 <Column>
   <Editor

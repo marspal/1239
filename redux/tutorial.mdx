@@ -244,12 +244,24 @@ redux 是一个状态管理器，那什么是状态呢？状态就是数据，�
     file="index.js"
     lang="js"
     height={500}
+    focus="20:47"
     id="state.10.js"
   />
 </Column>
 
 上一小节，我们把 reducer 按组件维度拆分了，通过 combineReducers 合并了起来。
 但是还有个问题， state 我们还是写在一起的，这样会造成 state 树很庞大，不直观，很难维护。我们需要拆分，一个 state，一个 reducer 写一块。
+
+<Column>
+  <Editor
+    code="state.10.js"
+    file="index.js"
+    lang="js"
+    height={500}
+    focus="20:47"
+    id="state.10.js"
+  />
+</Column>
 
 我们修改下 createStore 函数，增加一行 dispatch({ type: Symbol() })
 

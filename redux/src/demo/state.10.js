@@ -2,11 +2,7 @@
 let initState = {
   count: 0
 }
-function counterReducer(state, action) {
-  /*注意：如果 state 没有初始值，那就给他初始值！！*/  
-  if (!state) {
-      state = initState;
-  }
+function counterReducer(state = initState, action) {
   switch (action.type) {
     case 'INCREMENT':
       return {
