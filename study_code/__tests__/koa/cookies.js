@@ -5,6 +5,7 @@
 
 import http from 'http';
 import Cookies from '../../koa/cookies';
+import Keygrip from '../../koa/keygrip';
 import request from 'supertest';
 
 describe('new Cookies.Cookie(name, val, [opt])', () => {
@@ -94,10 +95,72 @@ describe('new Cookies.Cookie(name, val, [opt])', () => {
 
 describe('new Cookies(req, res, [options])', () => {
     it('should create new cookies instance', function (done) {
-        // todo
         assertServer(done, function (req, res) {
-
+            const cookies = new Cookies(req, res);
+            expect(cookies.constructor).toBe(Cookies);
+            expect(cookies.request).toBe(req);
+            expect(cookies.response).toBe(res);
+            expect(cookies.keys).toBeUndefined();
         });
+    });
+    it('should accept array of keys', function (done) {
+        assertServer(done, function (req, res) {
+            const cookies = new Cookies(req, res, ['keyboard cat']);
+            expect(typeof cookies.keys).toBe('object');
+            expect(cookies.keys.sign('foo=bar')).toEqual('iW2fuCIzk9Cg_rqLT1CAqrtdWs8');
+        });
+    });
+    it('should accept Keygrip instance', function (done) {
+        assertServer(done, function (req, res) {
+            const keys = new Keygrip(['keyboard cat']);
+            const cookies = new Cookies(req, res, keys);
+            expect(typeof cookies.keys).toBe('object');
+            expect(cookies.keys.sign('foo=bar')).toBe('iW2fuCIzk9Cg_rqLT1CAqrtdWs8');
+        });
+    });
+});
+
+describe('.keys', function () {
+    it('should accept array of keys', function (done) {
+        assertServer(done, function (req, res) {
+            const cookies = new Cookies(req, res, {keys: ['keyboard cat']});
+            expect(typeof cookies.keys).toBe('object');
+            expect(cookies.keys.sign('foo=bar')).toBe('iW2fuCIzk9Cg_rqLT1CAqrtdWs8');
+        });
+    });
+
+    it('should accept Keygrip instance', function (done) {
+        assertServer(done, function (req, res) {
+            const keys = new Keygrip(['keyboard cat']);
+            const cookies = new Cookies(req, res, {keys: keys});
+            expect(typeof cookies.keys).toBe('object');
+            expect(cookies.keys.sign('foo=bar')).toBe('iW2fuCIzk9Cg_rqLT1CAqrtdWs8');
+        });
+    });
+});
+
+describe('.secure', function () {
+    it('should default to undefined', function (done) {
+        assertServer(done, function (req, res) {
+            const cookies = new Cookies(req, res);
+            expect(cookies.secure).toBeUndefined();
+        });
+    });
+
+    it('should set secure flag', function (done) {
+        assertServer(done, function (req, res) {
+            const cookies = new Cookies(req, res, {secure: true});
+            expect(cookies.secure).toBeTruthy();
+        });
+    });
+});
+
+describe('.get(name, [options])', () => {
+    it('should return value of cookie', function (done) {
+        request(createServer(getCookieHandler('foo')))
+        .get('/')
+        .set('Cookie', 'foo=bar')
+        .expect(200, 'bar', done);
     });
 });
 
@@ -106,13 +169,39 @@ async function assertServer(done, test) {
         try {
             test(req, res);
             res.end('OK'); // ? 返回啥
-        } catch (e){
+        }
+        catch (e) {
             res.statusCode = 500;
-            res.end(e.name + ":" + e.message);
+            res.end(e.name + ':' + e.message);
         }
     });
     const res = await request(server).get('/');
     expect(res.status).toBe(200);
     expect(res.text).toBe('OK');
     done();
+}
+
+function createRequestListener(options, handler) {
+    const next = handler || options;
+    const opts = next === options ? undefined : options;
+    return function (req, res) {
+        const cookies = new Cookies(req, res, opts);
+        try {
+            next(req, res, cookies);
+        } catch (e) {
+            res.statusCode = 500;
+            res.end(e.name + ': ' + e.message);
+        }
+    };
+}
+
+function createServer(options, handler) {
+    return http.createServer()
+        .on('request', createRequestListener(options, handler));
+}
+
+function getCookieHandler(name, options) {
+    return function (req, res, cookies) {
+        res.end(String(cookies.get(name, options)));
+    };
 }

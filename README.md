@@ -77,8 +77,10 @@ Set-Cookie: __Host-id=1; Secure; Path=/; domain=example.com
 - cookie name & value的取值范围: /^[\u0009\u0020-\u007e\u0080-\u00ff]+$/;
 
 
+
 5. 测试工具package: 
   
   SuperTest: HTTP assertions made easy via superagent.
 
-  
+6. [http](./http/Readme.md)
+)
