@@ -29,7 +29,6 @@ store.dispatch = (action) => {
 
 const exceptionMiddleware = (action) => {
   try {
-    /*next(action)*/
     loggerMiddleware(action);
   } catch (err) {
     console.error('错误报告: ', err)
