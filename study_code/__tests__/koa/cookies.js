@@ -162,6 +162,29 @@ describe('.get(name, [options])', () => {
         .set('Cookie', 'foo=bar')
         .expect(200, 'bar', done);
     });
+    it('should work for cookie name with special charators', function (done) {
+        request(createServer(getCookieHandler('foo*(#bar)?.|$')))
+        .get('/').set('Cookie', 'foo*(#bar)?.|$=buzz').expect(200, 'buzz', done);
+    });
+    it('should return undefined without cookie', function (done) {
+        request(createServer(getCookieHandler('fizz')))
+            .get('/')
+            .set('Cookie', 'foo=bar')
+            .expect(200, 'undefined', done);
+    });
+    it('should return undefined without header', function (done) {
+        request(createServer(getCookieHandler('foo')))
+            .get('/')
+            .expect(200, 'undefined', done);
+    });
+    it('should throw without .keys', function (done) {
+        request(createServer(getCookieHandler('foo', {signed: true})))
+            .get('/')
+            .set('Cookie', 'foo=bar; foo.sig=iW2fuCIzk9Cg_rqLT1CAqrtdWs8')
+            .expect(500)
+            .expect('Error: .keys required for signed cookies')
+            .end(done);
+    });
 });
 
 async function assertServer(done, test) {
@@ -183,7 +206,7 @@ async function assertServer(done, test) {
 
 function createRequestListener(options, handler) {
     const next = handler || options;
-    const opts = next === options ? undefined : options;
+    const opts = next === 'options' ? undefined : options;
     return function (req, res) {
         const cookies = new Cookies(req, res, opts);
         try {
@@ -202,6 +225,6 @@ function createServer(options, handler) {
 
 function getCookieHandler(name, options) {
     return function (req, res, cookies) {
-        res.end(String(cookies.get(name, options)));
+        return res.end(String(cookies.get(name, options)));
     };
 }
