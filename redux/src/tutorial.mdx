@@ -1,0 +1,589 @@
+import { Note } from "./note"
+
+<Column>
+  <Note/>
+</Column>
+
+# 主题: 完全理解redux
+
+## 前言 {#before-we-start-the-tutorial}
+
+记得开始接触 react 技术栈的时候，最难理解的地方就是 redux。全是新名词：reducer、store、dispatch、middleware 等等。
+
+看了许多关于的redux博客, 包括《深入react技术栈》讲得晦涩难懂，越看越觉得难;
+
+开始前, 先了解如下几件事情：
+
+- redux 和 react 没有关系，redux 可以用在任何框架中;
+- connect 不属于 redux，它其实属于 react-redux;
+- 先暂时记得 reducer、store、dispatch、middleware 等等这些名词;
+
+概念: redux 是一个状态管理器; 理解成一个对象。
+
+<Column>
+  <div height={20} style={{ textAlign: "center" }}>
+    构件一个简单的redux
+  </div>
+  <Editor
+    code="state.01.js"
+    file="index.js"
+    lang="js"
+    focus="1:3"
+    height={130}
+    id="state.01.js"
+  />
+</Column>
+
+## 状态管理器 {#what-are-we-building}
+
+**简单的状态管理器**
+
+redux 是一个状态管理器，那什么是状态呢？状态就是数据，比如计数器中的 count。
+
+<Column>
+  <Editor
+    code="state.01.js"
+    file="index.js"
+    lang="js"
+    focus="4"
+    height={200}
+    id="state.01.js"
+  />
+</Column>
+
+**使用已经定义的状态**
+
+<Column>
+  <Editor
+    code="state.01.js"
+    file="index.js"
+    lang="js"
+    focus="5"
+    height={100}
+    id="state.01.js"
+  />
+</Column>
+
+**修改count状态值**
+
+<Column>
+  <Editor
+    code="state.02.js"
+    file="index.js"
+    lang="js"
+    height={350}
+    id="state.02.js"
+  />
+</Column>
+
+> 问题: 修改 count 之后，如何告知listener状态已经修改?
+>
+> 发布-订阅模式来解决这个问题。
+
+<Column>
+  <Editor
+    code="state.03.js"
+    file="index.js"
+    lang="js"
+    height={250}
+    id="state.03.js"
+  />
+</Column>
+
+** 使用计数状态器 **
+
+> 问题: 这个状态只能管理count, 如何管理更多状态?
+
+对上述代码进行封装，实现redux v1.0。
+
+**v1.0应该提供那些能力?**
+
+- changeState 修改状态数据的能力
+- getState 获取state状态数据的能力
+- subscribe 订阅的能力,通知所有的listener
+
+提供这三个能力: 不能让外界直接修改state， 也就是说state是私有数据; 
+**因此:** 定义一个createStore, 闭包state数据，提供上述三种能力。
+
+```js
+  const createStore=function(initialState){
+    var state = initialState;
+
+    function subscribe(){}
+    function changeState(){}
+    function getState(){}
+
+    return {
+      subscribe,
+      changeState,
+      getState
+    };
+  }
+```
+
+<Column>
+  <Editor
+    code="state.04.js"
+    file="index.js"
+    lang="js"
+    focus="1,3:11,13,15:20,22:29,31:34"
+    height={700}
+    id="state.04.js"
+  />
+</Column>
+
+**redux v1.0完整的实现**
+
+> 问题?
+>
+> state 可以被外界任意改变; state可以变成任意类型的值
+
+** 如何解决这个问题，约束state的修改? **
+
+## 有计划的状态管理器 {#prerequisites}
+
+有计划就是按照预先的方式来修改state; 两件事
+
+<Column>
+  <Editor
+    code="state.05.js"
+    file="index.js"
+    lang="js"
+    height={400}
+    id="state.05.js"
+  />
+</Column>
+
+1. 制定一个state修改计划,告诉store计划是什么
+2. 通过changeState方法，告诉它修改state的时候, 按照我们的计划修改。
+**plan函数:** 接收现在的state，和一个action，返回新的 state。
+
+<Column>
+  <Editor
+    code="state.04.js"
+    file="index.js"
+    lang="js"
+    height={600}
+    focus="2,12,14,30"
+    id="state.04.js"
+  />
+</Column>
+
+重构redux V1.0, 把plan告诉store，store.changeState 以后改变 state 要按照我的计划来改。
+
+统一redux变量名称,这 里把plan -> reducer, changeState->dispatch
+
+**完成 redux V2.0 **
+
+> 问题? 
+>
+> 现实问题: 项目中state极其复杂，导致reducer极其复杂?
+
+
+## reducer 的拆分合并 {#setup-for-the-tutorial}
+
+所有的计划写在一个 reducer 函数里面，会导致 reducer 函数及其庞大复杂。
+**解决办法**: 按照组件维度来拆分出多个 reducer 函数，然后通过一个函数来把他们合并起来。
+
+<Column>
+  <Editor
+    code="state.06.js"
+    file="index.js"
+    lang="js"
+    height={250}
+    focus="1:9"
+    id="state.06.js"
+  />
+</Column>
+
+** 复杂的Demo **
+
+管理两个状态数据: counter、info
+
+<Column>
+  <Editor
+    code="state.06.js"
+    file="index.js"
+    lang="js"
+    focus="33:67"
+    height={730}
+    id="state.06.js"
+  />
+</Column>
+
+**按照上述定义reducer方式定义两个各自的reducer**
+
+<Column>
+  <Editor
+    code="state.08.js"
+    file="index.js"
+    lang="js"
+    height={500}
+    id="state.08.js"
+  />
+</Column>
+
+**现在需要把多个reducer合并在一起
+定义combineReducer 函数来把多个 reducer 函数合并成一个 reducer 函数。
+**
+```js
+// 形如
+var reducerObj = {reducer1, reducer2};
+function combineReducer(reducerObj){
+  return function newReducer(state, action){}
+}
+```
+
+<Column>
+  <Editor
+    code="state.06.js"
+    file="index.js"
+    lang="js"
+    focus="11:31"
+    height={500}
+    id="state.06.js"
+  />
+</Column>
+
+**使用combineReducer**
+
+> 问题: state也会很大
+
+## state 的拆分和合并 {#setup-option-1-write-code-in-the-browser}
+
+<Column>
+  <Editor
+    code="state.10.js"
+    file="index.js"
+    lang="js"
+    height={370}
+    focus="1:14"
+    id="state.10.js"
+  />
+</Column>
+
+我们把 reducer 按组件维度拆分了，通过 combineReducer 合并了起来。
+但是还有个问题， state 我们还是写在一起的，这样会造成 state 树很庞大，
+不直观，很难维护。我们需要拆分，一个 state，一个 reducer 写一块。
+
+<Column>
+  <Editor
+    code="state.10.js"
+    file="index.js"
+    lang="js"
+    height={600}
+    focus="16:43"
+    id="state.10.js"
+  />
+</Column>
+
+**我们修改下 createStore 函数，增加一行 dispatch({ type: Symbol() })**
+
+作用:
+- createStore 的时候，用一个不匹配任何 type 的 action，来触发 state = reducer(state, action)
+
+- 因为 action.type 不匹配，每个子 reducer 都会进到 default 项，返回自己初始化的 state，这样就获得了初始化的 state 树了。
+
+
+```js
+/*这里没有传 initState 哦 */
+const store = createStore(reducer);
+/*这里看看初始化的 state 是什么*/
+console.dir(store.getState());
+```
+
+## 中间件middleware {#setup-option-2-local-development-environment}
+
+中间件 middleware 是 redux 中最难理解的地方, 主要参考的是koa中间件机制;
+
+redux中间件是对 dispatch 的扩展，或者说重写，增强 dispatch 的功能, 也就是说在执行真正的
+dispatch时, 执行其他操作
+
+<br />
+
+<Column>
+  <Editor
+    code="state.11.js"
+    file="index.js"
+    lang="js"
+    height={300}
+    id="state.11.js"
+  />
+</Column>
+
+**第一个:记录日志**
+
+dispatch 的时候打印出一些关键的数据; 便于开发测试、联调;
+
+<Column>
+  <Editor
+    code="state.12.js"
+    file="index.js"
+    lang="js"
+    height={300}
+    id="state.12.js"
+  />
+</Column>
+
+**第二个:记录异常** 
+
+当我们dispatch过程出现错误的时候,打印或者上传错误日志
+
+> Q: 如果我又想记录异常,又想打印日志？
+
+** 多中间件合作 **
+
+<Column>
+  <Editor
+    code="state.14.js"
+    file="index.js"
+    lang="js"
+    height={300}
+    focus="1:10"
+    id="state.14.js"
+  />
+</Column>
+
+
+我现在既需要记录日志，又需要记录异常，怎么办？当然很简单了，两个函数合起来呗！
+
+
+<Column>
+  <Editor
+    code="state.14.js"
+    file="index.js"
+    lang="js"
+    height={400}
+    focus="12:28"
+    id="state.14.js"
+  />
+</Column>
+
+如果又来一个需求怎么办？接着改 dispatch 函数？那再来10个需求呢？到时候 dispatch 函数肯定庞大混乱到无法维护了！这个方式不可取呀！
+
+我们需要考虑如何实现扩展性很强的多中间件合作模式。
+
+1、我们把 loggerMiddleware 提取出来
+
+<Column>
+  <Editor
+    code="state.14.js"
+    file="index.js"
+    lang="js"
+    height={400}
+    focus="30:38"
+    id="state.14.js"
+  />
+</Column>
+
+2、 我们把 exceptionMiddleware 提取出来
+
+<Column>
+  <Editor
+    code="state.14.js"
+    file="index.js"
+    lang="js"
+    height={400}
+    focus="41:50"
+    id="state.14.js"
+  />
+</Column>
+
+3、现在的代码有一个很严重的问题，就是 exceptionMiddleware 里面写死了 loggerMiddleware，
+我们需要让 next(action)变成动态的，随便哪个中间件都可以
+
+<Column>
+  <Editor
+    code="state.14.js"
+    file="index.js"
+    lang="js"
+    height={400}
+    focus="53:78"
+    id="state.14.js"
+  />
+</Column>
+
+4、同样的道理，loggerMiddleware 里面的 next 现在恒等于 
+store.dispatch，导致 loggerMiddleware 里面无法扩展别的中间件了！我们也把 next 写成动态的
+到这里为止，我们已经探索出了一个扩展性很高的中间件合作模式！
+
+<Column>
+  <Editor
+    code="state.14.js"
+    file="index.js"
+    lang="js"
+    height={400}
+    focus="81:101"
+    id="state.14.js"
+  />
+</Column>
+
+5.这时候我们开开心心的新建了一个 loggerMiddleware.js，
+一个exceptionMiddleware.js文件，想把两个中间件独立到单独的文件中去。会碰到什么问题吗？
+loggerMiddleware 中包含了外部变量 store，导致我们无法把中间件独立出去。那我们把 store 也作为一个参数传进去好了~
+
+
+### 中间件使用方式优化 {#help-im-stuck}
+
+```js
+import loggerMiddleware from './middlewares/loggerMiddleware';
+import exceptionMiddleware from './middlewares/exceptionMiddleware';
+import timeMiddleware from './middlewares/timeMiddleware';
+
+const store = createStore(reducer);
+const next = store.dispatch;
+
+const logger = loggerMiddleware(store);
+const exception = exceptionMiddleware(store);
+const time = timeMiddleware(store);
+store.dispatch = exception(time(logger(next)));
+```
+
+<Column>
+  <Editor
+    code="state.15.js"
+    file="index.js"
+    lang="js"
+    height={400}
+    id="state.15.js"
+  />
+</Column>
+
+#### 实现applyMiddleware {#apply-middleware}
+
+现在还有个小问题，我们有两种 createStore 了
+
+```js
+/*没有中间件的 createStore*/
+import { createStore } from './redux';
+const store = createStore(reducer, initState);
+
+/*有中间件的 createStore*/
+const rewriteCreateStoreFunc = applyMiddleware(exceptionMiddleware, timeMiddleware, loggerMiddleware);
+const newCreateStore = rewriteCreateStoreFunc(createStore);
+const store = newCreateStore(reducer, initState);
+为了让用户用起来统一一些，我们可以很简单的使他们的使用方式一致，我们修改下 createStore 方法
+
+const createStore = (reducer, initState, rewriteCreateStoreFunc) => {
+    /*如果有 rewriteCreateStoreFunc，那就采用新的 createStore */
+    if(rewriteCreateStoreFunc){
+       const newCreateStore =  rewriteCreateStoreFunc(createStore);
+       return newCreateStore(reducer, initState);
+    }
+    /*否则按照正常的流程走*/
+}
+
+```
+最终的用法
+
+```js
+const rewriteCreateStoreFunc = applyMiddleware(exceptionMiddleware, timeMiddleware, loggerMiddleware);
+
+const store = createStore(reducer, initState, rewriteCreateStoreFunc);
+
+```
+
+
+## 完整的redux {#overview}
+
+#### 退订 {#unsubscribe}
+
+不能退订的订阅都是耍流浪！我们修改下 store.subscribe 方法，增加退订功能
+
+```js
+  function subscribe(listener) {
+    listeners.push(listener);
+    return function unsubscribe() {
+      const index = listeners.indexOf(listener)
+      listeners.splice(index, 1)
+    }
+  }
+  // 使用
+  const unsubscribe = store.subscribe(() => {
+    let state = store.getState();
+    console.log(state.counter.count);
+  });
+
+  /*退订*/
+  unsubscribe();
+
+```
+
+#### 中间件拿到的store {#aaa-bbb}
+现在的中间件拿到了完整的 store，他甚至可以修改我们的 subscribe 方法，按照最小开放策略，我们只用把 getState 给中间件就可以了！因为我们只允许你用 getState 方法！
+
+修改下 applyMiddleware 中给中间件传的 store
+
+```js
+/*const chain = middlewares.map(middleware => middleware(store));*/
+const simpleStore = { getState: store.getState };
+const chain = middlewares.map(middleware => middleware(simpleStore));
+```
+
+### compose {#compose-bbb}
+
+我们的 applyMiddleware 中，把 [A, B, C] 转换成 A(B(C(next)))，是这样实现的
+
+```js
+const chain = [A, B, C];
+let dispatch = store.dispatch;
+chain.reverse().map(middleware => {
+   dispatch = middleware(dispatch);
+});
+```
+
+#### replaceReducer {#ewducer}
+reducer 拆分后，和组件是一一对应的。我们就希望在做按需加载的时候，reducer也可以跟着组件在必要的时候再加载，然后用新的 reducer 替换老的 reducer。
+
+```js
+const createStore = function (reducer, initState) {
+  ...
+  function replaceReducer(nextReducer) {
+    reducer = nextReducer
+    /*刷新一遍 state 的值，新来的 reducer 把自己的默认状态放到 state 树上去*/
+    dispatch({ type: Symbol() })
+  }
+  ...
+  return {
+    ...
+    replaceReducer
+  }
+}
+
+```
+
+##### 总结 {#overview-last}
+
+到了最后，我想把 redux 中关键的名词列出来，你每个都知道是干啥的吗？
+
+createStore
+
+创建 store 对象，包含 getState, dispatch, subscribe, replaceReducer
+
+reducer
+
+reducer 是一个计划函数，接收旧的 state 和 action，生成新的 state
+
+action
+
+action 是一个对象，必须包含 type 字段
+
+dispatch
+
+dispatch( action ) 触发 action，生成新的 state
+
+subscribe
+
+实现订阅功能，每次触发 dispatch 的时候，会执行订阅函数
+
+combineReducers
+
+多 reducer 合并成一个 reducer
+
+replaceReducer
+
+替换 reducer 函数
+
+middleware
+
+扩展 dispatch 函数！
