@@ -19,6 +19,8 @@
     "supertest": "^6.0.1"
   },
   "dependencies": {
-    "cookies": "^0.8.0"
+    "cookies": "^0.8.0",
+    "koa": "^2.13.0",
+    "koa-session": "^6.1.0"
   }
 }

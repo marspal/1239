@@ -3,6 +3,8 @@
  * @author andyxu
  */
 
+
+const ContextSession = require('./lib/contextSession');
 const CONTEXT_SESSION = Symbol('context#contextSession');
 const _CONTEXT_SESSION = Symbol('context#_contextSession');
 
@@ -16,9 +18,12 @@ module.exports = function (opts, app) {
     // 处理options,
     // 扩展context属性
     opts = formatOpts(opts);
-    extendContext(app.contxt, opts);
+    extendContext(app.context, opts);
     return async function session(ctx, next) {
         const sess = ctx[CONTEXT_SESSION];
+        if (sess.store) {
+            await sess.initFromExternal();
+        }
         try {
             await next();
         }
@@ -45,12 +50,14 @@ function extendContext(context, opts) {
     if (context[CONTEXT_SESSION]) {
         return;
     }
-    Object.defineProperty(context, {
+    Object.defineProperties(context, {
         [CONTEXT_SESSION]: {
             get() {
                 // this指的是context嘛？
-                if (this[_CONTEXT_SESSION]) return this[_CONTEXT_SESSION];
-                this[_CONTEXT_SESSION] = ''; // new ContextSession(this, opts);
+                if (this[_CONTEXT_SESSION]) {
+                    return this[_CONTEXT_SESSION];
+                }
+                this[_CONTEXT_SESSION] = new ContextSession(this, opts);
                 return this[_CONTEXT_SESSION];
             }
         },

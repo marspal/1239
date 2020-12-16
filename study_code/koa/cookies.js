@@ -1,7 +1,9 @@
 /**
  * @file andyxu cookie的设置
  * 
- * res.setHeader('setHeader', [Cookie, Cookie])
+ * 
+ * 通过Cookie设置一条Cookie, 形成一个数组[Cookie, Cookie]
+ * 生成Cookieres.setHeader('setHeader', [Cookie, Cookie])
  * 
  * 
  */
