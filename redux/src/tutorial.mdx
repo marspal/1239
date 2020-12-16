@@ -348,35 +348,38 @@ dispatch 的时候打印出一些关键的数据; 便于开发测试、联调;
 我现在既需要记录日志，又需要记录异常，怎么办？当然很简单了，两个函数合起来呗！
 
 
+**需要的中间件多，把中间件合在一起到时候 dispatch 函数肯定庞大混乱到无法维护了！**
+
+> Q: 这些中间件如何拆分?
+
+**1. 实现扩展性很强的多中间件**
+
 <Column>
   <Editor
     code="state.14.js"
     file="index.js"
     lang="js"
-    height={400}
-    focus="12:28"
+    height={250}
+    focus="12:20"
     id="state.14.js"
   />
 </Column>
 
-如果又来一个需求怎么办？接着改 dispatch 函数？那再来10个需求呢？到时候 dispatch 函数肯定庞大混乱到无法维护了！这个方式不可取呀！
-
-我们需要考虑如何实现扩展性很强的多中间件合作模式。
-
-1、我们把 loggerMiddleware 提取出来
+- **我们把 loggerMiddleware 提取出来**
 
 <Column>
   <Editor
     code="state.14.js"
     file="index.js"
     lang="js"
-    height={400}
+    height={250}
     focus="30:38"
     id="state.14.js"
   />
 </Column>
 
-2、 我们把 exceptionMiddleware 提取出来
+- **我们把 exceptionMiddleware 提取出来**
+
 
 <Column>
   <Editor
