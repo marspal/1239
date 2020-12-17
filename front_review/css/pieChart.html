@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pie Chart</title>
+    <style>
+        .container {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            border-radius: 100%;
+        }
+
+        .container div {
+            width: 50%;
+            height: 100%;
+            position: absolute;
+        }
+        .semi-1, .semi-2 { 
+            left: 0;
+            top: 0;
+        }
+        .semi-3, .semi-4 {
+            right: 0;
+            top: 0;
+        }
+  
+        .semi-1, .semi-3 {
+            background: red;
+        }
+  
+        .semi-2, .semi-4 {
+            background: white;
+        }
+  
+        .semi-1, .semi-2 {
+            border-radius: 100px 0 0 100px;
+            transform-origin: 100% 50%;
+            z-index: 2;
+        }
+  
+        .semi-3, .semi-4 {
+            z-index: 1;
+            left: 50%;
+            border-radius: 0 100px 100px 0;
+            transform-origin: 0% 0%;
+        }
+  
+        .semi-4{
+            /* animation: rotate-2 2s linear both infinite; */
+        }
+  
+        .semi-2{
+            /* animation: rotate-1 2s linear both infinite; */
+        }
+  
+        .semi-3 {
+            /* animation: zIndex 2s linear both infinite; */
+        }
+  
+        @keyframes zIndex{
+            from{z-index: 1;}
+            50%{z-index: 1;}
+            50.000001%{z-index: 2;}
+            to{z-index: 2;}
+        }
+                
+        @keyframes rotate-1 {
+            from{ transform: rotate(0);}
+            50%{transform: rotate(0);}
+            to{transform: rotate(180deg);}
+        }
+        
+        @keyframes rotate-2 {
+            from{ transform: rotate(0);}
+            /* 50%{transform: rotate(180deg);} */
+            to{transform: rotate(180deg);}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="semi-1"></div>
+        <div class="semi-2"></div>
+        <div class="semi-3"></div>
+        <div class="semi-4"></div>
+    </div>
+</body>
+</html>
