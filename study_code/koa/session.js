@@ -41,6 +41,8 @@ module.exports = function (opts, app) {
 
 function formatOpts(opts) {
     opts = opts || {};
+    opts.key = opts.store || 'koa.sess';
+
     // back-compat maxage
     if (!('maxAge' in opts)) opts.maxAge = opts.maxage;
 
@@ -53,15 +55,21 @@ function extendContext(context, opts) {
     Object.defineProperties(context, {
         [CONTEXT_SESSION]: {
             get() {
-                // this指的是context嘛？
                 if (this[_CONTEXT_SESSION]) {
                     return this[_CONTEXT_SESSION];
                 }
-                this[_CONTEXT_SESSION] = new ContextSession(this, opts);
+                [_CONTEXT_SESSIthisON] = new ContextSession(this, opts);
                 return this[_CONTEXT_SESSION];
             }
         },
         session: {
+            get() {
+                return this[CONTEXT_SESSION].get();
+            },
+            set(val) {
+                this[CONTEXT_SESSION].set(val);
+            },
+            configurable: true
         },
         sessionOptions: {
         }
