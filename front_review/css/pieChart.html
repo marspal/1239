@@ -9,20 +9,14 @@
             width: 200px;
             height: 200px;
             position: relative;
-            border-radius: 100%;
+            border-radius: 50%;
         }
 
         .container div {
             width: 50%;
             height: 100%;
             position: absolute;
-        }
-        .semi-1, .semi-2 { 
             left: 0;
-            top: 0;
-        }
-        .semi-3, .semi-4 {
-            right: 0;
             top: 0;
         }
   
@@ -40,27 +34,23 @@
             z-index: 2;
         }
   
-<<<<<<< HEAD
-        .container .semi-3, .semi-4 {
-=======
-        .semi-3, .semi-4 {
->>>>>>> 31289ae69d1412e98c200144806116c6867a5bce
+        .container > .semi-3 , .container > .semi-4 {
             z-index: 1;
             left: 50%;
             border-radius: 0 100px 100px 0;
-            transform-origin: 0% 0%;
+            transform-origin: 0% 50%;
         }
   
         .semi-4{
-            /* animation: rotate-2 2s linear both infinite; */
+            animation: rotate-2 2s linear both infinite;
         }
   
         .semi-2{
-            /* animation: rotate-1 2s linear both infinite; */
+            animation: rotate-1 2s linear both infinite;
         }
   
         .semi-3 {
-            /* animation: zIndex 2s linear both infinite; */
+            animation: zIndex 2s linear both infinite;
         }
   
         @keyframes zIndex{
@@ -72,13 +62,13 @@
                 
         @keyframes rotate-1 {
             from{ transform: rotate(0);}
-            50%{transform: rotate(0);}
+            50%{transform: rotate(0deg);}
             to{transform: rotate(180deg);}
         }
         
         @keyframes rotate-2 {
             from{ transform: rotate(0);}
-            /* 50%{transform: rotate(180deg);} */
+            50%{transform: rotate(180deg);}
             to{transform: rotate(180deg);}
         }
     </style>
