@@ -26,12 +26,13 @@ app.use(session(CONFIG, app));
 app.use(ctx => {
   // ignore favicon
   if (ctx.path === '/favicon.ico') return;
-  console.log(ctx.session, ctx.session.isNew);
   let n = ctx.session.views || 0;
   if(!ctx.session.user){
     ctx.session.user = {name: 'andyxu', 'age': 123}
   }
   ctx.session.views = ++n;
+  console.log(ctx.session);
+
   ctx.body = n + ' views';
 });
 

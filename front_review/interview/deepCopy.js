@@ -49,3 +49,24 @@ const curry = (fn, ...args) => {
   ? (...arguments) => curry(fn, ...args, ...arguments)
   : fn(...args);
 }
+
+function getPersonInfo(one, two, three) {
+  console.log(one);
+  console.log(two);
+  console.log(three);
+}
+
+const person = "Lydia";
+const age = 21;
+
+getPersonInfo`${person} is ${age} years old`;
+// getPersonInfo 必须是函数
+// 如果使用标记的模板字符串，则第一个参数的值始终是字符串值的数组。
+//  其余参数获取传递到模板字符串中的表达式的值！
+
+// 使用“use strict”，可以确保不会意外地声明全局变量
+
+const obj = { a: "one", b: "two", a: "three" };
+console.log(obj);
+
+// js6个假值: null、undefined、"", NaN,0,false
