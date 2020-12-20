@@ -2,15 +2,19 @@
 const util = {
   decode(string) {
     const body = Buffer.from(string, 'base64').toString('utf8');
-    return body;
+    const json = JSON.parse(body);
+    return json;
   },
   encode(body){
     body = JSON.stringify(body);
     return Buffer.from(body).toString('base64');
   },
-  CookieDateEpoch: new Date("1970-01-01").toUTCString()
+  CookieDateEpoch: new Date("1970-01-01").toUTCString(),
+  hash(sess){
+    // crc 循环冗余检查; 接收方进行检验确定数据
+    return "";
+  }
 };
 
-console.log(util.decode('eyJ2aWV3cyI6NSwidXNlciI6eyJuYW1lIjoiYW5keXh1IiwiYWdlIjoxMjN9LCJfZXhwaXJlIjoxNjA4MzkzNTQ0NjI3LCJfbWF4QWdlIjo4NjQwMDAwMH0='));
 
 module.exports = util;

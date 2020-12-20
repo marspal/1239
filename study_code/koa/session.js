@@ -5,6 +5,8 @@
  * extendContext(context, opts): 在app.context扩展了三个属性
  * CONTEXT_SESSION, session, sessionOptions
  * 当使用const sess = ctx[CONTEXT_SESSION]; 第一次使用初始化new ContextSession
+ * session===ctx.session: 是一个通过new Session创建的对象, 然后在这个对象上新增相关的属性
+ *
  */
 
 const util = require('./lib/util');
@@ -25,10 +27,8 @@ module.exports = function (opts, app) {
     extendContext(app.context, opts);
     return async function session(ctx, next) {
         const sess = ctx[CONTEXT_SESSION];
-        if (sess.store) {
-            await sess.initFromExternal();
-        }
         try {
+            // ctx.session.user
             await next();
         }
         catch (err) {
@@ -77,11 +77,17 @@ function extendContext(context, opts) {
         return;
     }
     Object.defineProperties(context, {
+        [CONTEXT_SESSION]: {},
+        session: {},
+        sessionOptions: {}
+    });
+    Object.defineProperties(context, {
         [CONTEXT_SESSION]: {
             get() {
                 if (this[_CONTEXT_SESSION]) {
                     return this[_CONTEXT_SESSION];
                 }
+                // this: app.context
                 this[_CONTEXT_SESSION] = new ContextSession(this, opts);
                 return this[_CONTEXT_SESSION];
             }
