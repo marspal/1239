@@ -17,7 +17,7 @@ function Keygrip(keys, alorithm, encoding) {
         return crypto.createHmac(alorithm, key)
             .update(data)
             .digest(encoding)
-            .replace(/\/|\+|=/g, function(x){
+            .replace(/\/|\+=/g, function(x){
                 return ({"/": "_", "+": "-", "=": ""})[x]
             });
     }

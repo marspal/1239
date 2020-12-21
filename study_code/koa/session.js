@@ -2,10 +2,11 @@
  * @file 揭开session的神秘面纱
  * @author andyxu
  * 
- * extendContext(context, opts): 在app.context扩展了三个属性
- * CONTEXT_SESSION, session, sessionOptions
- * 当使用const sess = ctx[CONTEXT_SESSION]; 第一次使用初始化new ContextSession
- * session===ctx.session: 是一个通过new Session创建的对象, 然后在这个对象上新增相关的属性
+ * extendContext(context, opts): 在app.context扩展了三个属性:
+ * - CONTEXT_SESSION: 初始化ContextSession 对生成的contextSession赋初值
+ * - session: 通过这个存储器属性去掉用ContextSession get方法初始化session model, 如:session.user 早session上设置user属性, 最后通过commit保存在Cookie中
+ * - sessionOptions: 获取opts: 通过formatOpts处理后的
+ * 当使用const sess = ctx[CONTEXT_SESSION]; 获取ContextSession实例
  *
  */
 
@@ -22,12 +23,16 @@ module.exports = function (opts, app) {
         throw new TypeError('app instance required: `session(opts, app)`');
     }
     // 处理options,
-    // 扩展context属性
+    // 扩展app.context属性
     opts = formatOpts(opts);
     extendContext(app.context, opts);
     return async function session(ctx, next) {
         const sess = ctx[CONTEXT_SESSION];
+        if (this.store) {
+            await sess.initFromExternal();
+        }
         try {
+            // 再其它中间件中执行session操作
             // ctx.session.user
             await next();
         }
@@ -43,20 +48,21 @@ module.exports = function (opts, app) {
     };
 };
 
-function formatOpts(opts) {
-    opts = opts || {};
+function formatOpts(opts = {}) {
     opts.key = opts.key || 'koa.sess';
 
     // back-compat maxage
     if (!('maxAge' in opts)) opts.maxAge = opts.maxage;
-    // defaults
+    // defaults: 为什么设置为true: 因为key是唯一的, cookies中根据这个overwrite重写kao.sess值
     if (opts.overwrite == null) opts.overwrite = true;
     if (opts.httpOnly == null) opts.httpOnly = true;
     
+    // 设置Cookie的作用域
     if (opts.sameSite == null) delete opts.sameSite;
     if (opts.signed == null) opts.signed = true;
     if (opts.autoCommit) opts.autoCommit = true;
  
+    // 同过encode, decode实现加密解密
     if (typeof opts.encode !== 'function') {
         opts.encode = util.encode;
     }
@@ -77,11 +83,6 @@ function extendContext(context, opts) {
         return;
     }
     Object.defineProperties(context, {
-        [CONTEXT_SESSION]: {},
-        session: {},
-        sessionOptions: {}
-    });
-    Object.defineProperties(context, {
         [CONTEXT_SESSION]: {
             get() {
                 if (this[_CONTEXT_SESSION]) {
@@ -97,7 +98,7 @@ function extendContext(context, opts) {
                 return this[CONTEXT_SESSION].get();
             },
             set(val) {
-                this[CONTEXT_SESSION].set(val);
+                return this[CONTEXT_SESSION].set(val);
             },
             configurable: true
         },
