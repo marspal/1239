@@ -54,7 +54,7 @@ class ContextSession {
             this.create();
             return;
         }
-        const json = await this.store.get(externalKey, opts.maxAge, { ctx, rolling: opts.rolling });
+        const json = await this.store.get(externalKey, opts.maxAge, {ctx, rolling: opts.rolling});
         if (!this.valid(json, externalKey)) {
             // create a new `externalKey`
             this.create();

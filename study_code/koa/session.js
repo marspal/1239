@@ -71,6 +71,10 @@ function formatOpts(opts = {}) {
         opts.decode = util.decode;
     }
 
+    const store = opts.store;
+    if (store) {
+
+    }
     if (!opts.genid) {
         opts.genid = +new Date();
     }
