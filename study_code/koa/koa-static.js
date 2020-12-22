@@ -1,5 +1,5 @@
 /**
- * @file koa-static 静态服务
+ * @file koa-static 静态文件服务
  * @author andyxu
  */
 'use strict';
