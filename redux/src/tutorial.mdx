@@ -387,13 +387,20 @@ dispatch 的时候打印出一些关键的数据; 便于开发测试、联调;
     file="index.js"
     lang="js"
     height={400}
-    focus="41:50"
+    focus="38:50"
     id="state.14.js"
   />
 </Column>
 
-3、现在的代码有一个很严重的问题，就是 exceptionMiddleware 里面写死了 loggerMiddleware，
-我们需要让 next(action)变成动态的，随便哪个中间件都可以
+> **Q:** 
+> 
+> exceptionMiddleware写死了loggerMiddleware，loggerMiddleware写死了store.dispatch; ** 重构middleware**
+
+```js
+  // 形如
+  const middleware = (next) => action => {}
+```
+
 
 <Column>
   <Editor
@@ -401,90 +408,62 @@ dispatch 的时候打印出一些关键的数据; 便于开发测试、联调;
     file="index.js"
     lang="js"
     height={400}
-    focus="53:78"
+    focus="52:57"
     id="state.14.js"
   />
 </Column>
 
-4、同样的道理，loggerMiddleware 里面的 next 现在恒等于 
-store.dispatch，导致 loggerMiddleware 里面无法扩展别的中间件了！我们也把 next 写成动态的
-到这里为止，我们已经探索出了一个扩展性很高的中间件合作模式！
+**同理: 把dispatch当成next参数传入loggerMiddleware**
 
 <Column>
   <Editor
     code="state.14.js"
     file="index.js"
     lang="js"
-    height={400}
-    focus="81:101"
+    height={450}
+    focus="83:100"
     id="state.14.js"
   />
 </Column>
 
-5.这时候我们开开心心的新建了一个 loggerMiddleware.js，
-一个exceptionMiddleware.js文件，想把两个中间件独立到单独的文件中去。会碰到什么问题吗？
-loggerMiddleware 中包含了外部变量 store，导致我们无法把中间件独立出去。那我们把 store 也作为一个参数传进去好了~
+> Q:
+>
+> 把中间件写在各自的文件中无法拿到store, 因此还需要**在重构中间**
 
+```js
+  // 形如
+  const middleware = store => next => action => {}
+```
 
 ### 中间件使用方式优化 {#help-im-stuck}
 
-```js
-import loggerMiddleware from './middlewares/loggerMiddleware';
-import exceptionMiddleware from './middlewares/exceptionMiddleware';
-import timeMiddleware from './middlewares/timeMiddleware';
+我们需要用一种方式, 自动增强中间件, 不需要在外面组装; 中间件数据是变化的, 组装方式是不变, 封装不变的部分**applyMiddleware**
 
-const store = createStore(reducer);
-const next = store.dispatch;
-
-const logger = loggerMiddleware(store);
-const exception = exceptionMiddleware(store);
-const time = timeMiddleware(store);
-store.dispatch = exception(time(logger(next)));
-```
 
 <Column>
   <Editor
     code="state.15.js"
     file="index.js"
     lang="js"
-    height={400}
+    height={450}
     id="state.15.js"
   />
 </Column>
 
-#### 实现applyMiddleware {#apply-middleware}
+### 实现applyMiddleware {#apply-middleware}
 
-现在还有个小问题，我们有两种 createStore 了
+<Column>
+  <Editor
+    code="state.16.js"
+    file="index.js"
+    lang="js"
+    height={300}
+    id="state.16.js"
+    style="font-size: 25px;"
+  />
+</Column>
 
-```js
-/*没有中间件的 createStore*/
-import { createStore } from './redux';
-const store = createStore(reducer, initState);
-
-/*有中间件的 createStore*/
-const rewriteCreateStoreFunc = applyMiddleware(exceptionMiddleware, timeMiddleware, loggerMiddleware);
-const newCreateStore = rewriteCreateStoreFunc(createStore);
-const store = newCreateStore(reducer, initState);
-为了让用户用起来统一一些，我们可以很简单的使他们的使用方式一致，我们修改下 createStore 方法
-
-const createStore = (reducer, initState, rewriteCreateStoreFunc) => {
-    /*如果有 rewriteCreateStoreFunc，那就采用新的 createStore */
-    if(rewriteCreateStoreFunc){
-       const newCreateStore =  rewriteCreateStoreFunc(createStore);
-       return newCreateStore(reducer, initState);
-    }
-    /*否则按照正常的流程走*/
-}
-
-```
-最终的用法
-
-```js
-const rewriteCreateStoreFunc = applyMiddleware(exceptionMiddleware, timeMiddleware, loggerMiddleware);
-
-const store = createStore(reducer, initState, rewriteCreateStoreFunc);
-
-```
+**最终的用法**
 
 
 ## 完整的redux {#overview}
@@ -555,38 +534,32 @@ const createStore = function (reducer, initState) {
 
 ```
 
-##### 总结 {#overview-last}
+## Summary {#overview-last}
 
-到了最后，我想把 redux 中关键的名词列出来，你每个都知道是干啥的吗？
+### redux 中关键的名词列出来 {#redux-last}
 
-createStore
+- **createStore:**
+  创建 store 对象，包含 getState, dispatch, subscribe, replaceReducer;
 
-创建 store 对象，包含 getState, dispatch, subscribe, replaceReducer
+- **reducer:**
+  reducer 是一个计划函数，接收旧的 state 和 action，生成新的 state;
 
-reducer
+- **action:**
+  action 是一个对象，必须包含 type 字段; 当action函数处理副作用;
 
-reducer 是一个计划函数，接收旧的 state 和 action，生成新的 state
+- **dispatch:**
+  dispatch(action) 触发 action，生成新的 state;
 
-action
+- **subscribe:**
+  每次触发 dispatch 的时候，会执行订阅函数
 
-action 是一个对象，必须包含 type 字段
+- **combineReducer:**
+  多个reducer 合并成一个 reducer
 
-dispatch
+- **replaceReducer:**
+  替换oldReducer函数
 
-dispatch( action ) 触发 action，生成新的 state
+- **middleware:**
+  扩展 dispatch 函数！
 
-subscribe
-
-实现订阅功能，每次触发 dispatch 的时候，会执行订阅函数
-
-combineReducers
-
-多 reducer 合并成一个 reducer
-
-replaceReducer
-
-替换 reducer 函数
-
-middleware
-
-扩展 dispatch 函数！
+- **applyMiddleware:**生成新的store
