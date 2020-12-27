@@ -1,0 +1,19 @@
+## 创建event对象
+在触发事件的过程中，我们会调用每个插件的extractEvents方法来创建对应的事件，这里我们就看看事件创建的过程。这里我们拿最常用的事件之一onChange来举例，主要看的是ChangeEventPlugin.js
+
+- 根据不同的情况设置getTargetInstFunc
+- isTextInputElement判断input标签的type是否合理，如果是textarea则直接返回true
+- 对于checkbox和radio使用click监听这些方法的区别就是判断本次事件的具体类型不同，最终调用的都是getInstIfValueChanged
+- 使用track判断input的值有没有变化，如果有变化则则返回，没有不返回，也就不需要生成事件
+
+从这里开始构建事件，首先 React 的事件有一个pool，可以复用事件对象，不需要每次都重新创建，然后调用accumulateTwoPhaseDispatches开始为事件对象挂载两个阶段的监听者：
+
+捕获阶段
+冒泡阶段
+forEachAccumulated跟调用事件的时候一样，其实就是为每个事件调用accumulateTwoPhaseDispatchesSingle
+
+traverseTwoPhase向上遍历树找到所有HostComponent，并对每一个节点调用accumulateDirectionalDispatches，listenerAtPhase代码如下：
+
+通过对HostComponent的Fiber对象上获取props，并判断时候有事件监听的props，比如onChange，onChangeCapture，如果有就返回处理函数。在accumulateDirectionalDispatches就会赋值在
+
+在这里并没有区分不同阶段的事件，但是在放到_dispatchListeners里面的过程中，会直接安排好顺序，注意traverseTwoPhase中的两个遍历的顺序，第一个是反向的，也就是从最顶点的节点开始。通过这样来保证事件触发是按照顺序来的。
