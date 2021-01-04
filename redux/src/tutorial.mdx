@@ -8,7 +8,8 @@ import { Note } from "./note"
 
 ## 前言 {#before-we-start-the-tutorial}
 
-记得开始接触 react 技术栈的时候，最难理解的地方就是 redux。全是新名词：reducer、store、dispatch、middleware 等等。
+记得开始接触 react 技术栈的时候，最难理解的地方就是 redux。
+全是新名词：reducer、store、dispatch、middleware 等等。
 
 看了许多关于的redux博客, 包括《深入react技术栈》讲得晦涩难懂，越看越觉得难;
 
@@ -16,7 +17,7 @@ import { Note } from "./note"
 
 - redux 和 react 没有关系，redux 可以用在任何框架中;
 - connect 不属于 redux，它其实属于 react-redux;
-- 先暂时记得 reducer、store、dispatch、middleware 等等这些名词;
+- 先暂时记得 reducer、store、dispatch、middleware这些名词;
 
 概念: redux 是一个状态管理器; 理解成一个对象。
 
@@ -76,7 +77,7 @@ redux 是一个状态管理器，那什么是状态呢？状态就是数据，�
   />
 </Column>
 
-> 问题: 修改 count 之后，如何告知listener状态已经修改?
+> Q: 修改 count 之后，如何告知listener状态已经修改?
 >
 > 发布-订阅模式来解决这个问题。
 
@@ -102,15 +103,16 @@ redux 是一个状态管理器，那什么是状态呢？状态就是数据，�
 - getState 获取state状态数据的能力
 - subscribe 订阅的能力,通知所有的listener
 
-提供这三个能力: 不能让外界直接修改state， 也就是说state是私有数据; 
-**因此:** 定义一个createStore, 闭包state数据，提供上述三种能力。
+提供三个能力的目的: 不能直接修改state,把state是私有数据; 
+
+**因此: 定义一个createStore, 闭包state数据，提供上述三种能力。**
 
 ```js
   const createStore=function(initialState){
     var state = initialState;
 
     function subscribe(){}
-    function changeState(){}
+    function changeState(newState){}
     function getState(){}
 
     return {
@@ -134,7 +136,7 @@ redux 是一个状态管理器，那什么是状态呢？状态就是数据，�
 
 **redux v1.0完整的实现**
 
-> 问题?
+> Q: v1.0的问题
 >
 > state 可以被外界任意改变; state可以变成任意类型的值
 
@@ -142,7 +144,7 @@ redux 是一个状态管理器，那什么是状态呢？状态就是数据，�
 
 ## 有计划的状态管理器 {#prerequisites}
 
-有计划就是按照预先的方式来修改state; 两件事
+有计划就是按照预先的方式来修改state; 两件事:
 
 <Column>
   <Editor
@@ -156,7 +158,8 @@ redux 是一个状态管理器，那什么是状态呢？状态就是数据，�
 
 1. 制定一个state修改计划,告诉store计划是什么
 2. 通过changeState方法，告诉它修改state的时候, 按照我们的计划修改。
-**plan函数:** 接收现在的state，和一个action，返回新的 state。
+
+**plan函数: 接收当前的state和一个action，返回新的 state。**
 
 <Column>
   <Editor
@@ -169,16 +172,13 @@ redux 是一个状态管理器，那什么是状态呢？状态就是数据，�
   />
 </Column>
 
-重构redux V1.0, 把plan告诉store，store.changeState 以后改变 state 要按照我的计划来改。
+重构redux V1.0, 把plan告诉store，store.changeState改变state时要按照计划函数来改。
 
 统一redux变量名称,这 里把plan -> reducer, changeState->dispatch
 
 **完成 redux V2.0 **
 
-> 问题? 
->
-> 现实问题: 项目中state极其复杂，导致reducer极其复杂?
-
+> Q: 项目中state极其复杂，导致reducer极其复杂? 
 
 ## reducer 的拆分合并 {#setup-for-the-tutorial}
 
@@ -211,25 +211,26 @@ redux 是一个状态管理器，那什么是状态呢？状态就是数据，�
   />
 </Column>
 
-**按照上述定义reducer方式定义两个各自的reducer**
+**按照上述定义reducer方式定义各自的reducer**
 
 <Column>
   <Editor
     code="state.08.js"
     file="index.js"
     lang="js"
-    height={500}
+    height={430}
     id="state.08.js"
   />
 </Column>
 
 **现在需要把多个reducer合并在一起
-定义combineReducer 函数来把多个 reducer 函数合并成一个 reducer 函数。
+定义combineReducers 函数来把多个 reducer 函数合并成一个 reducer 函数。
 **
 ```js
 // 形如
 var reducerObj = {reducer1, reducer2};
 function combineReducer(reducerObj){
+  // state === 整颗state树
   return function newReducer(state, action){}
 }
 ```
@@ -240,14 +241,14 @@ function combineReducer(reducerObj){
     file="index.js"
     lang="js"
     focus="11:31"
-    height={500}
+    height={480}
     id="state.06.js"
   />
 </Column>
 
 **使用combineReducer**
 
-> 问题: state也会很大
+> Q: state也会很大
 
 ## state 的拆分和合并 {#setup-option-1-write-code-in-the-browser}
 
@@ -262,8 +263,8 @@ function combineReducer(reducerObj){
   />
 </Column>
 
-我们把 reducer 按组件维度拆分了，通过 combineReducer 合并了起来。
-但是还有个问题， state 我们还是写在一起的，这样会造成 state 树很庞大，
+我们把 reducer 按组件维度拆分，通过 combineReducer 合并。
+但是还有个问题，state 我们还是写在一起的，这样会造成 state 树很庞大，
 不直观，很难维护。我们需要拆分，一个 state，一个 reducer 写一块。
 
 <Column>
@@ -284,13 +285,7 @@ function combineReducer(reducerObj){
 
 - 因为 action.type 不匹配，每个子 reducer 都会进到 default 项，返回自己初始化的 state，这样就获得了初始化的 state 树了。
 
-
-```js
-/*这里没有传 initState 哦 */
-const store = createStore(reducer);
-/*这里看看初始化的 state 是什么*/
-console.dir(store.getState());
-```
+这就是为什么写default的原因
 
 ## 中间件middleware {#setup-option-2-local-development-environment}
 
@@ -345,7 +340,7 @@ dispatch 的时候打印出一些关键的数据; 便于开发测试、联调;
 </Column>
 
 
-我现在既需要记录日志，又需要记录异常，怎么办？当然很简单了，两个函数合起来呗！
+我既需要记录日志，又需要记录异常，怎么办？当然很简单了，两个函数合起来！
 
 
 **需要的中间件多，把中间件合在一起到时候 dispatch 函数肯定庞大混乱到无法维护了！**
@@ -392,15 +387,17 @@ dispatch 的时候打印出一些关键的数据; 便于开发测试、联调;
   />
 </Column>
 
-> **Q:** 
+> Q: 
+>
+> 1.exceptionMiddleware写死了loggerMiddleware;
+> 2.loggerMiddleware写死了store.dispatch;
 > 
-> exceptionMiddleware写死了loggerMiddleware，loggerMiddleware写死了store.dispatch; ** 重构middleware**
 
 ```js
-  // 形如
+  // 目标 生成
+  store.dispatch = function(action){}
   const middleware = (next) => action => {}
 ```
-
 
 <Column>
   <Editor
@@ -435,6 +432,13 @@ dispatch 的时候打印出一些关键的数据; 便于开发测试、联调;
   const middleware = store => next => action => {}
 ```
 
+```js
+// 如果需要传入额外的参数redux-thunk
+const middleware = args => store => next => action => {}
+```
+
+
+
 ### 中间件使用方式优化 {#help-im-stuck}
 
 我们需要用一种方式, 自动增强中间件, 不需要在外面组装; 中间件数据是变化的, 组装方式是不变, 封装不变的部分**applyMiddleware**
@@ -457,9 +461,8 @@ dispatch 的时候打印出一些关键的数据; 便于开发测试、联调;
     code="state.16.js"
     file="index.js"
     lang="js"
-    height={300}
+    height={200}
     id="state.16.js"
-    style="font-size: 25px;"
   />
 </Column>
 
@@ -470,7 +473,7 @@ dispatch 的时候打印出一些关键的数据; 便于开发测试、联调;
 
 #### 退订 {#unsubscribe}
 
-不能退订的订阅都是耍流浪！我们修改下 store.subscribe 方法，增加退订功能
+退订！我们修改下 store.subscribe 方法，增加退订功能
 
 ```js
   function subscribe(listener) {
@@ -497,8 +500,11 @@ dispatch 的时候打印出一些关键的数据; 便于开发测试、联调;
 修改下 applyMiddleware 中给中间件传的 store
 
 ```js
-/*const chain = middlewares.map(middleware => middleware(store));*/
-const simpleStore = { getState: store.getState };
+const dispatch = store.dispatch;
+const simpleStore = { 
+  getState: store.getState，
+  dispatch: (action) => dispatch(action)
+};
 const chain = middlewares.map(middleware => middleware(simpleStore));
 ```
 
@@ -522,7 +528,8 @@ const createStore = function (reducer, initState) {
   ...
   function replaceReducer(nextReducer) {
     reducer = nextReducer
-    /*刷新一遍 state 的值，新来的 reducer 把自己的默认状态放到 state 树上去*/
+    /*刷新一遍 state 的值，新来的 reducer 
+    把自己的默认状态放到 state 树上去*/
     dispatch({ type: Symbol() })
   }
   ...
@@ -563,3 +570,22 @@ const createStore = function (reducer, initState) {
   扩展 dispatch 函数！
 
 - **applyMiddleware:**生成新的store
+
+- **redux-thunk源码**
+```js
+  
+function createThunkMiddleware(extraArgument) {
+  return ({ dispatch, getState }) => (next) => (action) => {
+    if (typeof action === 'function') {
+      return action(dispatch, getState, extraArgument);
+    }
+
+    return next(action);
+  };
+}
+
+const thunk = createThunkMiddleware();
+thunk.withExtraArgument = createThunkMiddleware;
+
+export default thunk;
+```
