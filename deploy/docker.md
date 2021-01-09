@@ -96,3 +96,22 @@ systemctl restart docker
 
 
 sysctl net.ipv4.ip_forward IP转发
+
+### Volume
+
+提供独立于容器之外的持久化存储; 因此能提供容器之间的共享数据
+
+
+### Registey 仓库
+
+
+### daemon 守护程序
+
+
+### client 客户端
+
+### container 容器入口
+
+### host 宿主机
+
+### compose 多容器app - docker-compose
