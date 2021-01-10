@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOM</title>
+</head>
+<body>
+    <input type="button" value="打开窗口" onclick="openWin()" />
+    <br><br>
+    <input type="button" value="移动窗口" onclick="moveWin()" />
+    <div style="height: 1000px;"></div>
+    <script>
+        function openWin(){
+            // myWindow=window.open('','','width=200,height=100');
+            // myWindow.document.write("<p>这是我的窗口</p>");
+            console.log(123);
+        }
+        document.addEventListener('click', function(e){
+            console.log(e.target, e.currentTarget);
+        }, true)
+        var startX = 0;
+        var startY = 0;
+        function moveWin(){
+            startX += 10;
+            startY += 10;
+            // myWindow.moveTo(startX,startY);
+            myWindow.resizeBy(100,50);
+
+            myWindow.focus();
+        }
+        // window.open('','', "height=100,width=300");
+    </script>
+</body>
+</html>

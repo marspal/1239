@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全屏品字布局</title>
+    <style>
+        .container {
+            font-size: 0;
+        }
+        
+        .container>div {
+            height: 200px;
+        }
+        
+        .top {
+            width: 100%;
+            background: #f8cff5;
+        }
+        
+        .left {
+            /* float: left; */
+            display: inline-block;
+            width: 50%;
+            background: #499e56;
+        }
+        
+        .right {
+            /* float: left; */
+            display: inline-block;
+            width: 50%;
+            background-color: #ce5a4b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="top">上</div>
+        <div class="left">左</div>
+        <div class="right">右</div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>三栏布局--inline-block</title>
+  <style>
+    .wrapper {
+      box-sizing: border-box;
+      border: 2px solid red;
+      font-size: 0;
+    }
+    .wrapper .left {
+      display: inline-block;
+      width: 200px;
+      height: 300px;
+      background: #faa;
+      vertical-align: top;
+    }
+    .wrapper .content {
+      width: calc(100% - 400px);
+      display: inline-block;
+      height: 400px;
+      background: #faf;
+      vertical-align: top;
+    }
+    .wrapper .right{
+      height: 500px;
+      width: 200px;
+      display: inline-block;
+      background-color: #aaf;
+      vertical-align: top;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="left"></div>
+    <div class="content"></div>
+    <div class="right"></div>
+  </div>
+</body>
+</html>

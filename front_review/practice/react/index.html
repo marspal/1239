@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script src="https://unpkg.com/react@16.13.1/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16.13.1/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.js"></script>
+    <script type="text/babel">
+        function loadable({
+            loader,
+            LoadingComponent,
+            ErrorComponent,
+            delay
+        }){
+            let preLoadedComponent = null;
+            return class Loadable extends React.Component {
+                state = {
+                    isLoading: false,
+                    error: null,
+                    Component: preLoadedComponent
+                }
+                componentWillMount(){
+                    if(!this.state.Component){
+                        this.loadComponent();
+                    }
+                }
+                loadComponent(){
+                    this._timeoutId = setTimeout(() => {
+                        this._timeoutId = null;
+                        this.setState({
+                            isLoading: true 
+                        })
+                    }, delay)
+                    loader().then(Component => {
+                        this.clearTimeout();
+                        preLoadedComponent = Component;
+                        this.setState({
+                            Component,
+                            isLoading: false
+                        })
+                    }).catch(err => {
+                        this.clearTimeout();
+                        this.setState({
+                            error: err,
+                            isLoading: false
+                        })
+                    });
+                }
+                clearTimeout() {
+                    if (this._timeoutId) {
+                        clearTimeout(this._timeoutId);
+                    }
+                }
+                render(){
+                    const {isLoading, error, Component} = this.state;
+                    console.log(isLoading, error, Component)
+                    if (error && ErrorComponent){
+                        console.log(error.message)
+                        return <ErrorComponent error={error}/>
+                    }else if (Component) {
+                        return <Component {...this.props}/>
+                    }else if(isLoading){
+                        return <LoadingComponent />
+                    }
+                    return null;
+                }
+            }
+        }
+
+        const AsyncComponent = () => {
+            return new Promise((resolve, reject)=>{
+                function Test() {
+                    return <div>Test</div>
+                }
+                setTimeout(() => {
+                    reject(new Error('错误的引用'))     
+                }, 3000);
+            })
+        }
+        function Loading(){
+            return <div>loading</div>
+        }
+        const Loadable = loadable({
+            loader: AsyncComponent,
+            LoadingComponent: Loading,
+            delay: 300,
+            ErrorComponent: (props) => <div>{props.error.message}</div>
+        });
+        ReactDOM.render(<Loadable />, document.getElementById('root'));
+    </script>
+</body>
+
+</html>

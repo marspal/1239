@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多图背景</title>
+    <style>
+        .multi-back {
+            height: 300px;
+            width: 300px;
+            position: relative;
+            display: flex;
+        }
+        .custom {
+            background: url("../images/Life_of_a_frame.png");
+            position: relative;
+            background-size: cover;
+            filter: blur(4px);
+            width: 100px;
+            height: 300px;
+        }
+        .content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 300px;
+            background: rgba(40, 44, 51, 0.5);
+            background-size: cover;
+            z-index: 111;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .content > div {
+            width: 98px;
+            height: 98px;
+            background-image: url("../images/Life_of_a_frame.png");
+            background-size: cover;
+            border-radius: 4px;
+        }
+        .other {
+            background: rgba(40, 44, 51, 0.5);
+            width: 300px;
+            height: 300px; 
+            display: flex;
+            justify-content: center;
+            
+        }
+        .other > div{
+            width: 100px;
+            background-image: url("../images/Life_of_a_frame.png");
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="multi-back">
+        <div class="custom"></div>
+        <div class="custom"></div>
+        <div class="custom"></div>
+        <div class="content">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div><br/>
+    <div class="other">
+        <div></div>
+    </div>
+</body>
+</html>

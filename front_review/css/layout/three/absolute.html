@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>absolute</title>
+    <style>
+        .container {
+            position: relative;
+        }
+        
+        .left {
+            position: absolute;
+            left: 0;
+            width: 100px;
+            height: 300px;
+            background-color: #ce5a4b;
+        }
+        
+        .main {
+            position: absolute;
+            left: 120px;
+            right: 220px;
+            height: 300px;
+            background-color: #f8cf5f;
+        }
+        
+        .right {
+            position: absolute;
+            right: 0;
+            width: 200px;
+            height: 300px;
+            background-color: #499e56;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="left"></div>
+        <div class="right"></div>
+        <div class="main"></div>
+    </div>
+</body>
+
+</html>

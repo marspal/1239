@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>负数margin</title>
+  <style>
+    *{margin:0; padding:0;}
+    .wrap{width:400px; border:5px solid #aaa;padding: 10px;}
+    .example{width:200px; height:200px; background:#CCCCFF;}
+    .normal{width:200px; height:200px; background:#CCE8CF;}
+    /* 添加或者注释掉下面的margin属性，查看前后差别
+    
+    */
+    .example{margin:10px 20px -30px 40px;}
+    a[href]{
+      color: red;
+    }
+   .active1{
+      color: pink;
+    }
+
+
+  
+  
+  
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="example">example元素：margin参考线举例说明文字，请查看此元素由于margin的变化所移动的位移量。</div>
+    <div class="normal">一个普通的Box</div>
+  </div>
+  <a id="archora" class="link active1" href="">aa</a>
+</body>
+</html>

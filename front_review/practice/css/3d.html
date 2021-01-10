@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D呈现</title>
+    <style>
+        body {
+            perspective: 500px;
+        }
+        .box {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            transition: all .3s;
+            transform-style: preserve-3d;
+        }
+        .box:hover {
+            transform: rotateY(60deg);
+        }
+        .box div {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            background-color: pink;
+        }
+        .box div:last-child {
+            background-color: powderblue;
+            transform: rotateX(60deg);
+        }
+        ul li {
+            list-style: none;
+            width: 120px;
+            height: 35px;
+            perspective: 500px;
+        }
+        .another {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: all .7s;
+            transform-style: preserve-3d;
+        }
+        .another:hover {
+            transform: rotateX(90deg);
+        }
+        .front, .bottom {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+        }
+        .front {
+            background-color: pink;
+            /* z-index: 1; */
+            transform: translateZ(17.5px);
+        }
+        .bottom {
+            background-color: purple;
+            transform: rotateX(-90deg) translateZ(17.5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div></div>
+        <div></div>
+    </div>
+    <ul>
+        <li>
+            <div class="another">
+                <div class="front">公众号</div>
+                <div class="bottom">前端自学驿站</div>
+            </div>
+        </li>
+    </ul>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>选择器</title>
+    <style>
+        .img-box {
+            position: relative;
+            top: 100px;
+            left: 200px;
+            z-index: 1;
+            display: inline-block;
+            overflow: hidden;
+            background: #70adc4;
+            cursor: pointer;
+            transition: transform .5s, box-shadow .3s;
+        }
+        .img-box img {
+            width: 200px;
+            height: 200px;
+            float: left;
+        }
+        .img-box .cover{
+            width: 200px;
+            height: 200px;
+            padding: 15px;
+            position: absolute;
+            box-sizing: border-box;
+            color: hotpink;
+        }
+        .img-box .cover h3 {
+            margin-top: 10%;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0 0 2px #ccc;
+            opacity: 0;
+            transition: opacity .5s;
+        }
+        .img-box .cover .con {
+            margin: 20px 0;
+            font-style: italic;
+            font-weight: bold;
+            transform: translateX(-150%);
+        }
+
+        .img-box .cover .brier {
+            font-size: 12px;
+            transform: translateX(150%);
+        }
+
+        .img-box .cover .handle {
+            position: absolute;
+            right: 10px;
+            bottom: -50px;
+            font-size: 25px;
+            transition: bottom 1s;
+            /* 对于position的过渡动画, 不能用position, 直接用位置属性: left right top bottom */
+        }
+        @keyframes textAnimation {
+            100% {
+                transform: translateX(0);
+            }
+        }
+        .img-box:hover {
+            transform: scale(1.1);
+            box-shadow: 2px 2px 13px 3px #ccc;
+        }
+
+        .img-box:hover img {
+            opacity: .5;
+        }
+
+       .img-box:hover .cover h3 {
+            opacity: 1;
+        }
+
+        .img-box:hover p {
+            animation: textAnimation .6s ease-out forwards;
+        }
+
+         .img-box:hover .cover .handle {
+            bottom: 5px;
+        }
+
+        .enter-box:hover ~ .img-box {
+            background-color: transparent;
+            color: wheat;
+        }
+        .enter-box:hover + .img-box {
+            color: red;
+        }
+        .box {
+            width: 200px;
+            height: 200px;
+        }
+        .box .center {
+            width: 150px;
+            height: 150px;
+            background-color: blueviolet;
+        }
+        .flex {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: seagreen;
+        }
+     
+        .box .center .inner {
+            width: 100px;
+            height: 100px;
+            background-color: coral;
+        }
+        .box:hover .center .inner {
+            background-color: red;
+        }
+        .test-important {
+            color: yellow !important;
+        }
+        #box1 div {
+            color: brown;
+        }
+        div #box3 {
+            color: #70adc4;
+        }
+        .c1 .c2 div {
+            color: blue;
+        }
+        /* #father #son {
+            color: blue;
+        } */
+        /* #father p.c2 {
+            color: blue;
+        } */
+        /* div.c1 p.c2 {
+            color: orchid;
+        } */
+        #father {
+            color: red !important;
+        }
+        div.parent {
+            width: 300px;
+            height: 300px;
+            border: 10px solid #000;
+            font-size: 46px;
+            text-shadow: 3px 13px 4px green;
+            box-sizing: border-box;
+        }
+        div.child {
+            width: 200px;
+            height: 200px;
+            background-color: brown;
+            border: 5px solid #000;
+            width: inherit;
+            box-sizing: inherit;
+            font-size: 80px;
+        }
+    </style>
+</head>
+<body>
+    <div class="img-box enter-box"> <!-- 悬浮在这个盒子的时候动态添加enter-box类名 -->
+        <img src="http://resource.beige.world/imgs/beige.jpg" alt="">
+        <div class="cover">
+          <h3>标题名称</h3>
+          <p class="con">Bei Ge</p>
+          <p class="brier">这里放内容简介，内容简介,这里放内容简介，内容简介,这里放内容简介，内容简介</p>
+          <div class="handle"><span>.</span><span>.</span><span>.</span></div>
+        </div>
+    </div>
+    <!-- 其他盒子 -->
+    <div class="img-box">2</div> 
+    <div class="img-box">3</div>
+    <div class="img-box">4</div>
+    <div class="img-box">5</div>
+
+    <div class="box flex">
+        <div class="center flex">
+          <div class="inner"></div>
+        </div>
+    </div>
+    <ul style="color: green;">
+        <li class="default">Default <a href="#">link</a> color</li>
+        <li class="inherit">Inherit the <a style="color: inherit;" href="#">link</a> color</li>
+        <li class="initial">Reset the <a style="color: initial;" href="#">link</a> color</li>
+        <li class="unset">Unset the <a style="color: unset;" href="#">link</a> color</li>
+    </ul>
+    <div id="box1" class="c1">
+    <div id="box2" class="c2">
+        <div id="box3" class="c3">
+        文字
+        </div>
+    </div>
+    <div id="father" class="c1">
+        <p id="son" class="c2">
+            试问这行字体是什么颜色的？
+        </p>
+    </div>
+    <div class="parent">
+        <div id="child" class="child">123</div>
+      </div>
+</body>
+</html>

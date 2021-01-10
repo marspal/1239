@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>负Margin</title>
+    <style>
+        * {
+            margin:0;
+            padding:0;
+        }
+        .wrap {
+            width:400px; border:5px solid #aaa;
+        }
+        .example {
+            height: 200px;
+            width: 200px;
+            background:#CCCCFF;
+        }
+        .normal {
+            height: 200px;
+            width: 200px;
+            background:#CCaCFF;
+            margin-top: -40px;
+        }
+        .example {
+            margin: -10px 20px 30px 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="example">example元素：margin参考线举例说明文字，请查看此元素由于margin的变化所移动的位移量。</div>
+        <div class="normal">一个普通的Box</div>
+    </div> 
+</body>
+</html>

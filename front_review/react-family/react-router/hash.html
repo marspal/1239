@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React Router专题</title>
+</head>
+<body>
+  <button onclick="history.go(-1)">返回</button>
+  <ul>
+    <li onclick="router.push('/')">首页</li>
+    <li onclick="router.push('/news')">新闻</li>
+    <li onclick="router.push('/product')">产品</li>
+  </ul>
+  <div id="app"></div>
+  <script>
+    var container = document.getElementById("app"), baseUrl = "/router";
+
+    var Router = function(opts){
+      this.routes = {};
+      this.curUrl = '/';
+      this.mode = "";
+      this.mode = opts.mode;
+      if(this.mode === 'history'){
+        this.eventHistoryRouter();
+      }else{
+        this.eventListener();
+      }
+    }
+    Router.prototype.eventListener = function(){
+      window.addEventListener("load", this.handleHashChange.bind(this));
+      // 监听hash
+      window.addEventListener("hashchange", this.handleHashChange.bind(this));
+    }
+    Router.prototype.handleHashChange = function(){
+      console.log(history.state);
+      this.curUrl = window.location.hash.slice(1) || "/";
+      this.routes[this.curUrl]();
+    }
+    Router.prototype.route = function(path, callback){
+      this.routes[path] = callback || function(){};
+    }
+    Router.prototype.push = function(path){
+      // let url = '#'
+      if(this.mode === 'history'){
+        window.history.pushState({
+          'test': 'aa'
+        }, 'test', path);
+        this.routes[path]();
+      }else{
+        path = '#' + path;
+        window.location.href = path;
+      }
+      
+    }
+    Router.prototype.eventHistoryRouter = function(){
+      window.addEventListener("load", this.handleHashChange.bind(this));
+      // 监听回退事件  打个比方：就是你点浏览器那个返回的箭头按钮时触发的事件
+      window.addEventListener("popstate", this.handleHashChange.bind(this));
+    }
+    var router = new Router({
+      mode:"history"
+    });
+    router.route('/', function(){
+      container.innerHTML = "首页";
+    });
+    router.route("/news", function(){
+      container.innerHTML = "新闻页";
+    });
+    router.route("/product", function(){
+      container.innerHTML = "产品页面";
+    });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>直播点赞</title>
+    <style>
+        .middle {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .btn {
+            top: 80%;
+            width: 50px;
+            line-height: 50px;
+            user-select: none;
+            background: #0066ff;
+            color: #fff;
+            text-align: center;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #999;
+            cursor: pointer;
+        }
+        .btn:hover{
+            opacity: 0.8;
+        }
+        .btn:active {
+            opacity: 1;
+        }
+
+        .like {
+            width: 25px;
+            height: 25px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            pointer-events: none;
+            background-image: url(https://img14.360buyimg.com/ling/jfs/t1/134959/40/26/8929/5ec79d68E968b0377/aa4feff2b7bcf231.png);
+            animation: animation-y 4s linear 0s 1, animation-x 3s linear 0s infinite;
+        }
+        .like--is-second{
+            background-image: url(https://img14.360buyimg.com/ling/jfs/t1/134906/37/26/9080/5ec79d5dE90e5f972/bc39e647c61c8bab.png);
+            animation: animation-y 4s linear 0s 1, animation-x 3s linear -2s infinite;
+        }
+        @keyframes animation-y {
+            0%{
+                transform: translate(-50%, 100px) scale(0);
+            }
+            50%{
+                transform: translate(-50%, -100px) scale(1.5);
+            }
+            100%{
+                transform: translate(-50%, -300px) scale(2.0);
+            }
+        }
+        @keyframes animation-x {
+            0%{
+                margin-left: 0px;
+            }
+            25%{
+                margin-left: 25px;
+            }
+            75%{
+                margin-left: -25px;
+            }
+            100%{
+                margin-left: 0px;
+            }
+        }
+    </style>
+    <script>
+        let count = 0;
+        function like() {
+            count ++;
+            const likeDom = document.createElement('div');
+            likeDom.className = count % 2 ===0 ? 'middle like' : 'middle like like--is-second';
+            document.body.appendChild(likeDom);
+            setTimeout(() => {
+                document.body.removeChild(likeDom);
+            }, 3900);
+        }
+    </script>
+</head>
+<body>
+    <div class="middle btn" onclick="like()">点赞</div>
+</body>
+</html>

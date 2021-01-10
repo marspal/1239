@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>跨域资源共享(CORS)</title>
+
+</head>
+<body>
+  测试
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script>
+    axios.post('http://localhost:3000/cors',null,  {
+      headers:{
+        cc: 123,
+      },
+      withCredentials: true
+    }).then((res)=>console.log(res));
+  </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flex 实现方式</title>
+    <style>
+        body {
+            margin: 0px;
+        }
+        
+        .container {
+            display: flex;
+        }
+        
+        .left {
+            background-color: #ce5a4b;
+            height: 200px;
+            flex: 0 0 200px;
+        }
+        
+        .right {
+            background-color: #499e56;
+            height: 200px;
+            flex: 1 1 300px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="left"></div>
+        <div class="right"></div>
+    </div>
+</body>
+
+</html>

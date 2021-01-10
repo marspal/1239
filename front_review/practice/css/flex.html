@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flex布局</title>
+    <style>
+        .wrapper {
+            display: flex;
+            justify-content: space-around;
+            background-color: blue;
+            height: 200px;
+            /* align-items: center; */
+            flex-wrap:wrap;
+            align-content: center;
+        }
+        .wrapper > div {
+            background-color: cadetblue;
+            border: 1px solid red;
+            width: 200px;
+            /* height: 30px; */
+        }
+        /* .wrapper > div:first-child {
+            height: 50px;
+            align-self: center;
+            flex-basis: 0px;
+        }
+        .wrapper > div:last-child {
+            height: 100px;
+            align-self: flex-end;
+        } */
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="flex1">子盒子#flex1: 1</div>
+        <div class="flex2">子盒子#flex2: 2</div>
+        <div class="flex2">子盒子#flex3: 3</div>
+        <div class="flex2">子盒子#flex4: 4</div>
+        <div class="flex2">子盒子#flex5: 5</div>
+        <div class="flex2">子盒子#flex6: 6</div>
+        <div class="flex2">子盒子#flex7: 7</div>
+        <div class="flex2">子盒子#flex8: 8</div>
+        <div class="flex2">子盒子#flex9: 9</div>
+    </div>
+</body>
+</html>

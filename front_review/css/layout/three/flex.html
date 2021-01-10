@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flex布局</title>
+    <style>
+        .container {
+            display: flex;
+        }
+        
+        .main {
+            background: #f8cff8;
+            width: 100%;
+            height: 300px;
+            order: 2
+        }
+        
+        .left {
+            background-color: #ce5a4b;
+            width: 100px;
+            height: 300px;
+            margin-right: 20px;
+            flex-shrink: 0;
+            order: 1;
+        }
+        
+        .right {
+            background-color: #499e56;
+            width: 200px;
+            height: 300px;
+            flex-shrink: 0;
+            margin-left: 20px;
+            order: 3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="main"></div>
+        <div class="left"></div>
+        <div class="right"></div>
+    </div>
+</body>
+
+</html>

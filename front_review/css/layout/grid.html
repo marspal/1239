@@ -1,51 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>grid布局</title>
+    <title>Grid </title>
     <style>
         .wrapper {
             margin: 60px;
-            display: inline-grid;
-            grid-template-columns: repeat(2, 500px);
-            grid-template-rows: 100px 120px 300px;
-            grid-gap: 10px;
-            border: 1px solid red;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 200px);
+            grid-gap: 5px;
+            grid-template-rows: repeat(2, 50px);
         }
-        .one {
+        
+        yidian_engineers .one {
             background: #19CAAD;
         }
-        .two { 
-            background: #8CC7B5;
+        
+        .two {
+            background: rgb(93, 99, 97);
         }
+        
         .three {
             background: #D1BA74;
         }
+        
         .four {
             background: #BEE7E9;
         }
+        
         .five {
             background: #E6CEAC;
         }
+        
         .six {
             background: #ECAD9E;
         }
+        
         .item {
             text-align: center;
-            font-size: 300%;
+            font-size: 200%;
+            color: #fff;
         }
     </style>
 </head>
+
 <body>
     <div class="wrapper">
-        <div class="one item">One</div>
-        <div class="two item">Two</div>
+        <div class="one item">one</div>
+        <div class="two item">two</div>
         <div class="three item">Three</div>
-        <div class="four item">Four</div>
-        <div class="five item">Five</div>
-        <div class="six item">Six</div>
+        <div class="four item">four</div>
+        <div class="five item">five</div>
+        <div class="six item">six</div>
     </div>
-    <span>123123</span>
 </body>
+
 </html>

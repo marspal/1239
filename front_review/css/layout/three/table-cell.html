@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>table-cell</title>
+    <style>
+        .container {
+            width: 100%;
+            display: table;
+        }
+        
+        .container>div {
+            display: table-cell;
+            height: 300px;
+        }
+        
+        .content {
+            height: 100%;
+            background-color: red;
+            margin: 0 20px;
+        }
+        
+        .left {
+            width: 100px;
+            min-width: 100px;
+            background-color: #ce5a4b;
+        }
+        
+        .right {
+            width: 200px;
+            min-width: 200px;
+            background-color: #499e56;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="left"></div>
+        <!-- 这时的main要放在中间 -->
+        <div class="main">
+            <div class="content"></div>
+        </div>
+        <div class="right"></div>
+    </div>
+</body>
+
+</html>

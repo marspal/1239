@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Tab</title>
+    <style>
+        .demoTab {
+            width:400px;
+        }
+        .demoTab .demoTabHd {
+            border:1px solid #6C92AD;
+            background:#EAF0FD;
+            border-bottom: none;
+            height: 28px;
+            margin-bottom: -1px;
+        } 
+        .demoTab .demoTabBd {
+            border:1px solid #6C92AD;
+        }
+        .demoTabNav {
+            line-height: 28px;
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+        
+        .demoTabNav .demoTabList {
+            list-style: none;
+            float: left;
+            padding: 0 22px;
+            border-left: 1px solid #6C92AD;
+            border-right: 1px solid #6C92AD;
+            font-weight:bold;
+            color:#005590;
+            text-align:center;
+            cursor:pointer;
+            margin-left: -1px;
+        }
+        .demoTabNav .demoTabList.current{background:#fff;}
+        .demoTabContent {
+
+            display: none;
+            height: 50px;
+            padding: 15px;
+        }
+        .demoTabContent.current{
+            display: block;
+        }
+    </style>
+ 
+</head>
+<body>
+    <div class="demoTab">
+        <div class="demoTabHd">
+            <ul class="demoTabNav" id="demoTabNav">
+                <li class="demoTabList current">前端</li>
+                <li class="demoTabList">实战</li>
+                <li class="demoTabList">交互</li>
+                <li class="demoTabList">优化</li>
+            </ul>
+        </div>
+        <div class="demoTabBd">
+            <div class="roundBox">
+                <div class="demoTabContent current">1</div>
+                <div class="demoTabContent">2</div>
+                <div class="demoTabContent">3</div>
+                <div class="demoTabContent">4</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const demoTabNav =  document.getElementById('demoTabNav');
+        demoTabNav.addEventListener('click', function(e){
+            this.querySelector('.current').classList.remove('current');
+            e.target.classList.add('current');
+            var index = [].indexOf.call(this.children, e.target);
+            const roundBox = document.querySelector('.roundBox');
+            roundBox.querySelector('.current').classList.remove('current');
+            roundBox.children[index].classList.add('current');
+        });
+    </script>
+</body>
+</html>

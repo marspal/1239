@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steps</title>
+    <style>
+        .middle{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .body {
+            background: #0079f5;
+            color: #fff;
+            text-align: center;
+            box-sizing: border-box;
+            padding-top: 80px;
+        }
+        .main {
+            width: 260px;
+            height: 200px;
+            background: url(https://jdc.jd.com/h5/jd-campus-2017/international/images/tet.png) no-repeat;
+            background-size: 100%;
+            animation: animate 2s 1s steps(47) infinite alternate;
+        }
+        input:checked+.main{
+            animation-play-state: paused;
+        }
+
+        @keyframes animate {
+            0%{
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 0 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    是否暂停动画
+    <input type='checkbox'   />
+    <div class="middle main"></div>
+</body>
+</html>

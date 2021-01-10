@@ -1,12 +1,12 @@
-## module
+## module (模块化)
 
-ES6: 静态化，编译时就能确定模块的依赖关系、以及输入、输出变量; CommonJS AMD只能运行时确定这些东西;
+``ES6:`` 核心思想静态化, 编译时就能确定模块的依赖关系、以及输入、输出变量; CommonJS、AMD只能运行时确定这些东西;
 
 export语句输出的接口，与其对应的值是动态绑定关系，即通过该接口，可以取到模块内部实时的值。
 
-as 重命名
+> as 重命名
 
-import命令输入的变量都是只读的，因为它的本质是输入接口。也就是说，不允许在加载模块的脚本里面，改写接口。
+import命令输入的变量都是只读的,因为它的本质是输入接口; 也就是说,不允许在加载模块的脚本里面改写接口。
 
 由于import是静态执行，所以不能使用表达式和变量，这些只有在运行时才能得到结果的语法结构。
 
@@ -60,17 +60,15 @@ export * from 'my_module';
 // 默认接口
 export { default } from 'foo';
 
+// 等价
 export { es6 as default } from './someModule';
-
-// 等同于
 import { es6 } from './someModule';
 export default es6;
 
 export { default as es6 } from './someModule';
 
-export * as ns from "mod";
-
 // 等同于
+export * as ns from "mod";
 import * as ns from "mod";
 export {ns};
 ```

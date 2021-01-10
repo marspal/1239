@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>虚拟列表</title>
+    <style>
+        .infinite-list-container {
+            position: relative;
+            height: 300px;
+            overflow: auto;
+        }
+        .infinit-list-phantom {
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            position: absolute;
+            height: 600px;
+            z-index: -1;
+        }
+        .infinit-list {
+        }
+        .infinit-list > div {
+            border-bottom: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script src="https://unpkg.com/react@16.13.1/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16.13.1/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.js"></script>
+    <script type="text/babel">
+        function InfiniteList(){
+            const screenHeight = 300;
+            const itemHeight = 30;
+            const listData = [
+                1,
+                2,3,4,5,6,7,8,9,0,11,12,13,14,15,16,17,18,19,20
+            ]
+            const visibleCount = Math.ceil(screenHeight/itemHeight);
+            const [visibleDataList, setVisibleDataList] = React.useState(listData.slice(0, visibleCount));
+            const [listScrollTop, setListScrollTop] = React.useState(0);
+            const listHeight = itemHeight * listData.length;
+            const containerRef = React.useRef();
+            const handleScroll = () => {
+                const startOffset = containerRef.current.scrollTop - (containerRef.current.scrollTop % itemHeight);
+                const startIndex = Math.floor(containerRef.current.scrollTop / itemHeight);
+                const endIndex = startIndex + visibleCount
+                const visibleData = listData.slice(startIndex, endIndex)
+                setListScrollTop(containerRef.current.scrollTop);
+                setVisibleDataList(visibleData);
+            }
+            const infinitListStyle={
+                transform: `translate3d(0px,${listScrollTop}px,0px)`
+            }
+            console.log(infinitListStyle);
+            return (
+                <div className="infinite-list-container" onScroll={handleScroll} ref={containerRef}>
+                    <div className="infinit-list-phantom" style={{height: listHeight + 'px'}}></div>
+                    <div className="infinit-list" style={infinitListStyle}>
+                        {visibleDataList.map(item => <div key={item} style={{height: itemHeight + 'px'}}>{item}</div>)}
+                    </div>
+                </div>
+            );
+        }
+        function App(){
+            return <InfiniteList />
+        }
+        ReactDOM.render(<App/>, document.getElementById('root'))
+    </script>
+</body>
+</html>
