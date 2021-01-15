@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>优惠券</title>
+    <style>
+        .coupon {
+            background-color: #E0E0E0;
+            width: 200px;
+            --main-color: #EC407A;
+            --f-color: #444;
+        }
+        .price {
+            position: relative;
+            height: 120px;
+            background-image: radial-gradient(
+                circle at 100px -8px, #fff 20px, var(--main-color) 21px
+            );
+            color: rgba(255,255,255);
+            font-size: 20px;
+            text-align: center;
+            padding-top: 40px;
+        }
+        .price span {
+            font-size: 14px;
+        }
+        .price .timeout {
+            color: var(--f-color);
+            font-size: 14px;
+            margin-top: 25px;
+        }
+        .price::after {
+            position: absolute;
+            content: '';
+            display: block;
+            width: 100%;
+            bottom: -5px;
+            border-bottom: 10px dotted #E0E0E0;
+        }
+        .describe {
+            color: #333;
+            padding: 10px;
+            font-size: 14px;
+        }
+        .btns {
+        /* 使其button可以居中 */
+            text-align: center;
+        }
+        .btns button {
+            border: none;
+            box-shadow: none;
+            outline: none;
+            background-color: var(--main-color);
+            color: #fff;
+            width: 50%;
+            border-radius: 20px;
+            line-height: 30px;
+            margin: 40px 0 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="coupon">
+        <div class="price">
+            100元
+            <span>优惠券</span>
+            <p class="timeout">2020-12-31 18:18:18过期</p>
+        </div>
+        <div class="describe">
+            <p>1、商城、美食可用</p>
+            <p>2、过期作废</p>
+        </div>
+        <div class="btns">
+            <button>立即使用</button>
+        </div>
+    </div>
+</body>
+</html>
