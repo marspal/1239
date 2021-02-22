@@ -5,6 +5,7 @@
 // 创建ReactElement: element
 // element: ReactElements node: Dom Elements
 // render is where React changes the DOM, so let's do the update ourselves
+
 function createElement(type, props, ...children) {
   return {
     type,
@@ -18,6 +19,7 @@ function createElement(type, props, ...children) {
     }
   };
 }
+
 function render(element, container) {
   wipRoot = {
     dom: container,
@@ -39,34 +41,38 @@ function createTextElement(text) {
   }
 }
   
-  let nextUnitOfWork = null;
-  let wipRoot = null;
-  let currentRoot = null; // 保存最新一次提交
-  let deletions = null;
+let nextUnitOfWork = null;
+let wipRoot = null;
+let currentRoot = null; // 保存最新一次提交
+let deletions = null;
 
-  function workLoop(deadline){
-    let shouldYield = false;
-    while(nextUnitOfWork && !shouldYield){
-      nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
-      shouldYield = deadline.timeRemaining() < 1;
-    }
-    // commit The Tree
-    if(!nextUnitOfWork && wipRoot){
-      commitRoot();
-    }
-    requestIdleCallback(workLoop);
+// 每一个element对应一个fiber
+// 每一个fiber就是一个unit
+function workLoop(deadline){
+  let shouldYield = false;
+  while(nextUnitOfWork && !shouldYield){
+    // 执行work并且返回next unit of work
+    nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
+    shouldYield = deadline.timeRemaining() < 1;
   }
-  
+  // commit The Tree
+  if(!nextUnitOfWork && wipRoot){
+    commitRoot();
+  }
   requestIdleCallback(workLoop);
-  let wipFiber = null;
-  let hookIndex = null;
-  function updateFunctionComponent(fiber) {
-    wipFiber = fiber;
-    hookIndex = 0;
-    wipFiber.hooks = [];
-    const children = [fiber.type(fiber.props)];
-    reconcileChildren(fiber, children);
-  }
+}
+
+requestIdleCallback(workLoop);
+  
+let wipFiber = null;
+let hookIndex = null;
+function updateFunctionComponent(fiber) {
+  wipFiber = fiber;
+  hookIndex = 0;
+  wipFiber.hooks = [];
+  const children = [fiber.type(fiber.props)];
+  reconcileChildren(fiber, children);
+}
   function useState(initial){
     const oldHook = 
       wipFiber.alternate &&
