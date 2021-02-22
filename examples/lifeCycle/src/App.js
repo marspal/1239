@@ -19,7 +19,7 @@ class App extends React.Component {
     console.log('app shouldComponentUpdate', props, state, this.props, this.state);
     return true;
   }
-  onIncrementAction = () => {
+  onIncrementAction = (e) => {
     let count = this.state.count;
     this.setState({
       count: count + 1
