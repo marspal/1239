@@ -202,8 +202,7 @@ function updateFunctionComponent(fiber) {
           dom: null,
           parent: wipFiber,
           alternate: null, // TODO？
-          effectTag: 'PLACEMENT',
-  
+          effectTag: 'PLACEMENT'
         };
       }
       if(oldFiber && !sameType){
