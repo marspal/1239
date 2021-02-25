@@ -1,10 +1,26 @@
-/* eslint-disalbe */
+/**
+ * @file build own React
+ * @author andyxu
+ * I:   createElement function
+ * II:  render function
+ * III: Concurrent Mode
+ * IV:  Fibers
+ * V:   Render and Commit Phases
+ * VI:  Reconciliation
+ * VII: Function Components
+ * VIII: Hooks
+ */
 
-// todo scheduler package 实现了requestIdleCallback
-// todo 事件的绑定
-// 创建ReactElement: element
-// element: ReactElements node: Dom Elements
-// render is where React changes the DOM, so let's do the update ourselves
+/**
+ * todo:
+ * 实现requestIdleCallback
+ * 实现事件绑定
+ * 实现class组件
+ *
+ * 说明:
+ * element: 表示ReactElement
+ * node:  Dom Elements
+ */
 
 function createElement(type, props, ...children) {
   return {
@@ -48,7 +64,7 @@ let deletions = null;
 
 // 每一个element对应一个fiber
 // 每一个fiber就是一个unit
-function workLoop(deadline){
+function workLoop(deadline) {
   let shouldYield = false;
   while(nextUnitOfWork && !shouldYield){
     // 执行work并且返回next unit of work
@@ -128,14 +144,14 @@ function updateFunctionComponent(fiber) {
       nextFiber = nextFiber.parent;
     }
   }
-  
-  function createDom(fiber){
-    const dom = fiber.type === "TEXT_ELEMENT"
-      ? document.createTextNode("")
-      : document.createElement(fiber.type);
-    updateDom(dom, {}, fiber.props);
-    return dom;
-  }
+
+function createDom(fiber) {
+  const dom = fiber.type === "TEXT_ELEMENT"
+    ? document.createTextNode("")
+    : document.createElement(fiber.type);
+  updateDom(dom, {}, fiber.props);
+  return dom;
+}
   // Reconciliation
   function commitRoot(){
     deletions.forEach(commitWork);
