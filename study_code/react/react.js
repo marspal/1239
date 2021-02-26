@@ -22,6 +22,24 @@
  * node:  Dom Elements
  */
 
+/**
+ * React根据一些提示和试探, 以跳过没有任何更新的子树
+ * React仅保留有effect fiber 并仅访问那些 fibers
+ * React回收了先前tree的fiber。
+ * React使用过期时间戳标记每个更新，并使用它来决定哪个更新具有更高的优先级。
+ */
+
+class Component {
+  constructor(props) {
+    this.props = props;
+    this.state = this.state || {};
+  }
+
+  setState(partialState) {
+    this.state = Object.assign({}, this.state, partialState);
+  }
+}
+
 function createElement(type, props, ...children) {
   return {
     type,
@@ -259,26 +277,31 @@ function updateDom(dom, prevProps, nextProps) {
 }
 
 function useState(initial) {
-  const oldHook =
+  const oldHook = 
     wipFiber.alternate &&
     wipFiber.alternate.hooks &&
     wipFiber.alternate.hooks[hookIndex];
+
   const hook = {
     state: oldHook ? oldHook.state : initial,
-    queue: [],
-  }
-  const setState = action => {
-    hook.queue.push(action)
+    queue: []
+  };
+
+  const actions = oldHook ? oldHook.queue : [];
+  actions.forEach(action => {
+    hook.state = action(hook.state);
+  });
+
+  const setState = (action) => {
+    hook.queue.push(action);
     wipRoot = {
       dom: currentRoot.dom,
       props: currentRoot.props,
-      alternate: currentRoot,
+      alternate: currentRoot
     }
-    nextUnitOfWork = wipRoot
-  }
-  wipFiber.hooks.push(hook)
-  hookIndex++
-  return [hook.state, setState]
+    nextUnitOfWork = wipRoot;
+  };
+  return [hook.state, setState];
 }
 
 const Didact = {
