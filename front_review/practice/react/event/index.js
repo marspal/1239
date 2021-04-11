@@ -1,3 +1,0 @@
-// eventPlugins
-// syntheticEvents
-// event
