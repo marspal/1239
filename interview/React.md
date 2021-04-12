@@ -51,3 +51,37 @@ queue.enqueueUpdate(new Update((state) => ({number: state.number + 1})));
 queue.enqueueUpdate(new Update((state) => ({number: state.number + 1})));
 console.log(queue.forceUpdate()); 
 ```
+
+> Q: fiber树
+
+Fiber是一个执行单元, 每次执行完一个单元，React检查还剩多少时间，没有时间让出控制权
+
+- fiber之前
+
+```js
+let root = {
+  key: 'A1',
+  children: [
+    {
+      key: 'B1',
+      children: [
+        {key: 'C1', children:[]},
+        {key: 'C2', children:[]},
+      ]
+    },
+    {
+      key: 'B2',
+      children: []
+    }
+  ]
+}
+
+function walk(element){
+  doWork(element);
+  element.children.forEach(walk);
+}
+function doWork(element) {
+  console.log(element.key);
+}
+walk(root);
+```
