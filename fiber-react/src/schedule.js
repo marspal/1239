@@ -1,18 +1,33 @@
 /**
  * 从根节点开始渲染和调度
  * 两个阶段:
- * render阶段: diff过程 对比新旧的虚拟DOM, 进行删除、更新或创建
- * 结果是effect list; 知道那些节点删除了、那些节点增加了
+ * diff阶段 对比新旧的虚拟DOM, 进行删除、更新或创建。
+ * render阶段成果是effect list知道哪些节点更新了、知道那些节点删除了、那些节点增加了
+ * render阶段两个任务: 1. 根据虚拟Dom生成fiber树 2. 收集effect list
  * commit阶段: 进行DOM更新创建阶段 
  */
-import {ELEMENT_TEXT, PLACEMENT, TAG_HOST, TAG_ROOT, TAG_TEXT} from './constant';
+import {
+  ELEMENT_TEXT,
+  PLACEMENT,
+  DELETION,
+  TAG_HOST,
+  TAG_ROOT,
+  TAG_TEXT,
+  UPDATE
+} from './constant';
 import { setProps } from './utils';
-let nextUnitOfWork = null;
-let workInProgressRoot = null;
 
+
+let nextUnitOfWork = null; // 下一个工作单元
+let workInProgressRoot = null; // 正在渲染的根fiber
+let currentRoot = null; // 渲染成功后的树
+let deletions = []; // 删除的节点并不放在effect list中; 单独记录并执行
 function scheduleRoot(fiber){
-  nextUnitOfWork = fiber;
+  if(currentRoot){ // 已经渲染过一次
+    fiber.alternate = currentRoot; 
+  }
   workInProgressRoot = fiber;
+  nextUnitOfWork = fiber;
 }
 
 /**
@@ -106,7 +121,7 @@ function performUnitOfWork(fiber){
   }
   let nextFiber = fiber;
   while(nextFiber){
-    completeUnitOfWork(fiber);
+    completeUnitOfWork(fiber); // 没有儿子让自己完成
     if(nextFiber.sibling){
       return nextFiber.sibling;
     }
@@ -128,13 +143,16 @@ function completeUnitOfWork(fiber){
   if(returnFiber){
     if(!returnFiber.firstEffect){
       returnFiber.firstEffect = fiber.firstEffect;
-      returnFiber.lastEffect = fiber.lastEffect;
     }
-    if(re){
-
+    if(returnFiber.lastEffect){
+      if(returnFiber.lastEffect){
+        returnFiber.lastEffect.nextEffect = fiber.firstEffect;
+      } else {
+        returnFiber.lastEffect = fiber.lastEffect;
+      }
     }
     const effectTag = fiber.effectTag;
-    if(effectTag){
+    if(effectTag){ // 有副作用
       if(returnFiber.lastEffect){
         returnFiber.lastEffect.nextEffect = fiber;
       } else {
@@ -151,10 +169,44 @@ function workLoop(deadline){
     nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
     shouldYield = deadline.timeRemaining() < 1;
   }
-  if(!nextUnitOfWork){
+  if(!nextUnitOfWork && workInProgressRoot){
     console.log('render阶段结束');
+    commitRoot();
   }
   requestIdleCallback(workLoop, {timeout: 5000});
+}
+
+function commitRoot(){
+  deletions.forEach(commitWork);
+  let currentFiber = workInProgressRoot.firstEffect;
+  while(currentFiber){
+    commitWork(currentFiber);
+    currentFiber = currentFiber.nextEffect;
+  }
+  deletions.length = 0; // 提交后清空
+  currentRoot = workInProgressRoot;
+  workInProgressRoot = null;
+}
+
+function commitWork(fiber){
+  if(!fiber) return;
+  let returnFiber = fiber.return;
+  let returnDOM = returnFiber.stateNode;
+  if(fiber.effectTag === PLACEMENT){
+    returnDOM.appendChild(fiber.stateNode);
+  } else if(fiber.effectTag === DELETION){
+    returnDOM.removeChild(fiber.stateNode);
+  } else if(fiber.effectTag === UPDATE){
+    if(fiber.type === ELEMENT_TEXT){
+      if(fiber.alternate.props.text !== fiber.props.text){
+        fiber.stateNode.textContent = fiber.props.text;
+      }
+    } else {
+      updateDOM(fiber.stateNode, 
+        fiber.alternate.props, fiber.props);
+    }
+  }
+  fiber.effectTag = null;
 }
 
 // react告诉浏览器, 空闲的时候执行
