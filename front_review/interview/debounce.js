@@ -26,8 +26,8 @@ function promisifiy(fn, ...args){
   return function(){
     args.concat(Array.from(arguments));
     return new Promise((resolve, reject) => {
-      args.push(function(err, data){
-        if(err) reject(err);
+      args.push(function(err, data) {
+        if(err)reject(err);
         resolve(data);
       });
       fn.apply(null, args)
@@ -49,31 +49,31 @@ function promisifiy(fn, ...args){
 const newObj = JSON.parse(JSON.stringify({}));
 
 function isObj(obj){
-  return typeof obj === 'object' && obj
+  return typeof obj === 'object' && obj !== null;
 }
+
 function cloneDeep(source, hash = new WeakMap()){
   let cloneObj;
-  let Constructor = source.constructor;
+  let Constructor = source.Constructor;
   switch(Constructor){
     case RegExp:
       cloneObj = new Constructor(source);
       break;
     case Date:
-      cloneObj = new Constructor(source.getTime());
+      cloneObj = new Date(source.getTime());
       break;
     default:
-      if(hash.has(source)) return hash.get(source);
+      if(hash.has(source))return hash.get(source);
       cloneObj = new Constructor();
       hash.set(source, cloneObj);
   }
   for(let key in source){
     if(Object.prototype.hasOwnProperty.call(source, key)){
-      cloneObj[key] = isObj(source[key]) ? cloneDeep(source[key], hash) : source[key];
+      cloneObj[key] = isObj(source[key]) ? cloneObj(source[key], hash) : source[key];
     }
   }
   return cloneObj;
 }
-
 
 // Event Bus
 class EventEmitter{
@@ -110,6 +110,14 @@ class EventEmitter{
 }
 
 // L instanceof R
+function instance_of(L, R){
+  const O = R.prototype;
+  L = L.__proto__;
+  while (true) {
+    if(L === null) return false;
+    if(L === O) return true;
+  }
+}
 function instance_of(L, R){
   const O = R.prototype;
   L = L.__proto__;
@@ -322,3 +330,5 @@ const Class = (function(_Parent = null){
   Constructor.prototype.getAge = {}
   return Constructor;
 })(Parent);
+
+// 先看集成
