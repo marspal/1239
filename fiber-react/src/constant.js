@@ -9,6 +9,7 @@ export const TAG_HOST = Symbol.for('TAG_HOST');
 // 文本文档节点
 export const TAG_TEXT = Symbol.for('TAG_TEXT');
 
+// 操作
 export const PLACEMENT = Symbol.for('PLACEMENT');
 export const UPDATE = Symbol.for('UPDATE');
 export const DELETION = Symbol.for('DELETION');

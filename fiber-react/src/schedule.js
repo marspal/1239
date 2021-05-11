@@ -3,8 +3,9 @@
  * 两个阶段:
  * diff阶段 对比新旧的虚拟DOM, 进行删除、更新或创建。
  * render阶段成果是effect list知道哪些节点更新了、知道那些节点删除了、那些节点增加了
+ * 
  * render阶段两个任务: 1. 根据虚拟Dom生成fiber树 2. 收集effect list
- * commit阶段: 进行DOM更新创建阶段 
+ * commit阶段: 进行DOM更新创建阶段; 此阶段不能暂停,要一气呵成;
  */
 import {
   ELEMENT_TEXT,
@@ -56,11 +57,13 @@ function createDOM(fiber){
   }
 }
 
+// 为dom设置属性
 function updateDOM(dom, oldProps, newProps){
   setProps(dom, oldProps, newProps);
 }
 
 function updateHostRoot(fiber){
+  // [element] 先处理自己 如果是一个原生节点; 1.创建真实的DOM 2.创建子fiber
   let children = fiber.props.children;
   reconcileChildren(fiber, children);
 }
@@ -91,6 +94,7 @@ function reconcileChildren(fiber, children){
     if(child.type === ELEMENT_TEXT){
       tag = TAG_TEXT;
     } else if(typeof child.type === 'string') {
+      // 如果是字符串，那就是一个元素DOM节点
       tag = TAG_HOST;
     }
     let newFiber = {
@@ -99,14 +103,15 @@ function reconcileChildren(fiber, children){
       props: child.props,
       stateNode: null, // div还没创建DOM元素
       return: fiber,
-      effectTag: PLACEMENT, // 副作用标识: 增删查
+      effectTag: PLACEMENT, // 副作用标识: 增 删 更新
       nextEffect: null, // effect list也是一个单链表
-      // effect list顺序和完成的顺序是一样的, ☞放入修改的节点
+      // effect list顺序和完成的顺序是一样的, 只放有副作用的Fiber
     };
     // 最小儿子没有弟弟
     if(index === 0){
       fiber.child = newFiber;
     } else {
+      // 子fiber串联起来
       prevSibling.sibling = newFiber;
     }
     prevSibling = newFiber;
@@ -163,6 +168,7 @@ function completeUnitOfWork(fiber){
   }
 }
 
+// 循环执行工作nextUnitOfWork
 function workLoop(deadline){
   let shouldYield = false;
   while(nextUnitOfWork && !shouldYield){
@@ -173,6 +179,7 @@ function workLoop(deadline){
     console.log('render阶段结束');
     commitRoot();
   }
+  // 不管有没有任务，都请求再次调度 每一帧都要执行一次workLoop
   requestIdleCallback(workLoop, {timeout: 5000});
 }
 
