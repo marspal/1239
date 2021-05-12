@@ -146,16 +146,20 @@ function performUnitOfWork(fiber){
 function completeUnitOfWork(fiber){
   let returnFiber = fiber.return;
   if(returnFiber){
+    // 把儿子的effect连挂载到父亲身上
     if(!returnFiber.firstEffect){
       returnFiber.firstEffect = fiber.firstEffect;
     }
+
     if(returnFiber.lastEffect){
       if(returnFiber.lastEffect){
         returnFiber.lastEffect.nextEffect = fiber.firstEffect;
-      } else {
-        returnFiber.lastEffect = fiber.lastEffect;
       }
+      returnFiber.lastEffect = fiber.lastEffect;
     }
+ 
+
+    // 吧自己挂载到父亲身上
     const effectTag = fiber.effectTag;
     if(effectTag){ // 有副作用
       if(returnFiber.lastEffect){
