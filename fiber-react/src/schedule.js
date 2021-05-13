@@ -23,12 +23,21 @@ let nextUnitOfWork = null; // 下一个工作单元
 let workInProgressRoot = null; // 正在渲染的根fiber
 let currentRoot = null; // 渲染成功后的树
 let deletions = []; // 删除的节点并不放在effect list中; 单独记录并执行
-function scheduleRoot(fiber){
-  if(currentRoot){ // 已经渲染过一次
-    fiber.alternate = currentRoot; 
+
+function scheduleRoot(rootFiber){
+  // 双缓冲机制
+  if(currentRoot && currentRoot.alternate){
+    workInProgressRoot = currentRoot.alternate; // 第一次渲染的那一棵树
+    workInProgressRoot.props = rootFiber.props;
+    workInProgressRoot.alternate = currentRoot;
+  } else if(currentRoot){ // 至少已经渲染过一次
+    rootFiber.alternate = currentRoot;
+    workInProgressRoot = rootFiber;
+  } else { // 第一次渲染
+    workInProgressRoot = rootFiber;
   }
-  workInProgressRoot = fiber;
-  nextUnitOfWork = fiber;
+  workInProgressRoot.firstEffect = workInProgressRoot.lastEffect = workInProgressRoot.nextEffect = null;
+  nextUnitOfWork = workInProgressRoot;
 }
 
 /**
@@ -86,33 +95,54 @@ function updateHost(fiber){
 function reconcileChildren(fiber, children){
   let index = 0;
   let prevSibling;
+  let oldFiber = fiber.alternate && fiber.alternate.child;
 
   // 遍历我们的子虚拟DOM数组,为每个虚拟DOM元素创建Fiber
-  while(index < children.length){
+  while(index < children.length || oldFiber){
     let child = children[index];
+    let newFiber; // 新的fiber
+    const sameType = oldFiber && child && child.type === oldFiber.type;
     let tag;
-    if(child.type === ELEMENT_TEXT){
+    if(child && child.type === ELEMENT_TEXT){
       tag = TAG_TEXT;
-    } else if(typeof child.type === 'string') {
+    } else if(child && typeof child.type === 'string') {
       // 如果是字符串，那就是一个元素DOM节点
       tag = TAG_HOST;
     }
-    let newFiber = {
-      tag,
-      type: child.type,
-      props: child.props,
-      stateNode: null, // div还没创建DOM元素
-      return: fiber,
-      effectTag: PLACEMENT, // 副作用标识: 增 删 更新
-      nextEffect: null, // effect list也是一个单链表
-      // effect list顺序和完成的顺序是一样的, 只放有副作用的Fiber
-    };
+    if(sameType){
+      newFiber = {
+        tag: oldFiber.tag,
+        type: oldFiber.type,
+        props: child.props,
+        stateNode: oldFiber.stateNode,
+        return: fiber,
+        alternate: oldFiber,
+        effectTag: UPDATE,
+        nextEffect: null
+      };
+    } else if(!sameType && child) {
+      newFiber = {
+        tag,
+        type: child.type,
+        props: child.props,
+        stateNode: null, // div还没创建DOM元素
+        return: fiber,
+        effectTag: PLACEMENT, // 副作用标识: 增 删 更新
+        nextEffect: null, // effect list也是一个单链表
+      };
+    } else if(!sameType && oldFiber){
+      oldFiber.effectTag = DELETION;
+      deletions.push(oldFiber);
+    }
     // 最小儿子没有弟弟
     if(index === 0){
       fiber.child = newFiber;
     } else {
       // 子fiber串联起来
       prevSibling.sibling = newFiber;
+    }
+    if(oldFiber){
+      oldFiber = oldFiber.sibling;
     }
     prevSibling = newFiber;
     index ++;
@@ -158,7 +188,6 @@ function completeUnitOfWork(fiber){
       returnFiber.lastEffect = fiber.lastEffect;
     }
  
-
     // 吧自己挂载到父亲身上
     const effectTag = fiber.effectTag;
     if(effectTag){ // 有副作用
@@ -195,6 +224,7 @@ function commitRoot(){
     currentFiber = currentFiber.nextEffect;
   }
   deletions.length = 0; // 提交后清空
+  // 渲染结束后，赋值给currentRoot: 当前页面上的fiber树
   currentRoot = workInProgressRoot;
   workInProgressRoot = null;
 }
